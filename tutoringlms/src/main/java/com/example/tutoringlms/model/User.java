@@ -10,7 +10,7 @@ import lombok.Data;
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -26,5 +26,6 @@ public abstract class User {
 
     private String password;
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private Role role;
 }

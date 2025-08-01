@@ -8,7 +8,7 @@ import lombok.Data;
 public class Forum {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "class_id", unique = true)

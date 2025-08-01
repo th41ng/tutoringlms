@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 public class Announcement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String title;
     private String content;

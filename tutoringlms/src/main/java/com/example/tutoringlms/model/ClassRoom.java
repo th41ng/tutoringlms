@@ -9,7 +9,7 @@ import java.util.List;
 public class ClassRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String className;
     private String schedule;

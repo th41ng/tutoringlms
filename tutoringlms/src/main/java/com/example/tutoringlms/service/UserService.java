@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -16,7 +19,7 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     public User register(RegisterRequest request) {
-        if (request.getRole() != Role.STUDENT) {
+        if (request.getRole() != Role.ROLE_STUDENT) {
             throw new IllegalArgumentException("Chỉ học sinh mới được phép đăng ký");
         }
 
@@ -24,7 +27,7 @@ public class UserService {
         student.setUsername(request.getUsername());
         student.setPassword(passwordEncoder.encode(request.getPassword()));
         student.setEmail(request.getEmail());
-        student.setRole(Role.STUDENT);
+        student.setRole(Role.ROLE_STUDENT);
         student.setFirstName(request.getFirstName());
         student.setLastName(request.getLastName());
         student.setPhoneNum(request.getPhoneNum());
@@ -36,5 +39,40 @@ public class UserService {
         return userRepo.findByUsername(username)
                 .filter(u -> passwordEncoder.matches(rawPassword, u.getPassword()))
                 .orElse(null);
+    }
+
+    public List<User> findAllUsers() {
+        return userRepo.findAll();
+    }
+
+    public Optional<User> getUserById(Long id) {
+        return userRepo.findById(id);
+    }
+
+    public User updateUser(Long id, RegisterRequest request) {
+        Optional<User> optionalUser = userRepo.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new IllegalArgumentException("Không tìm thấy người dùng với ID: " + id);
+        }
+
+        User user = optionalUser.get();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhoneNum(request.getPhoneNum());
+
+        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        return userRepo.save(user);
+    }
+
+    public void deleteUserById(Long id) {
+        if (!userRepo.existsById(id)) {
+            throw new IllegalArgumentException("Người dùng không tồn tại");
+        }
+        userRepo.deleteById(id);
     }
 }

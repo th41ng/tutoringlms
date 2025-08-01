@@ -1,0 +1,51 @@
+<!--<!doctype html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Quản lý người dùng</title>-->
+<!--    <th:block th:replace="base :: bootstrap"></th:block>-->
+<!--</head>-->
+<!--<body>-->
+<!--<main class="container mt-4">-->
+<!--    <div th:replace="base :: header"></div>-->
+
+<!--    <h2 class="text-center text-success">Danh sách người dùng</h2>-->
+
+<!--    <div class="text-end mb-3">-->
+<!--        <a th:href="@{/admin/add}" class="btn btn-success">➕ Thêm người dùng</a>-->
+<!--    </div>-->
+
+<!--    <table class="table table-striped table-bordered">-->
+<!--        <thead class="table-dark text-center">-->
+<!--        <tr>-->
+<!--            <th>ID</th>-->
+<!--            <th>Username</th>-->
+<!--            <th>Email</th>-->
+<!--            <th>Họ</th>-->
+<!--            <th>Tên</th>-->
+<!--            <th>SĐT</th>-->
+<!--            <th>Vai trò</th>-->
+<!--            <th>Hành động</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="user : ${users}" class="text-center align-middle">-->
+<!--            <td th:text="${user.id}">1</td>-->
+<!--            <td th:text="${user.username}">Admin</td>-->
+<!--            <td th:text="${user.email}">admin@example.com</td>-->
+<!--            <td th:text="${user.lastName}">Nguyễn</td>-->
+<!--            <td th:text="${user.firstName}">Văn A</td>-->
+<!--            <td th:text="${user.phoneNum}">0123456789</td>-->
+<!--            <td th:text="${user.role}">ROLE_ADMIN</td>-->
+<!--            <td>-->
+<!--                <a th:href="@{/admin/edit/{id}(id=${user.id})}" class="btn btn-warning btn-sm">✏️ Sửa</a>-->
+<!--                <a th:href="@{/admin/delete/{id}(id=${user.id})}" class="btn btn-danger btn-sm"-->
+<!--                   onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này?')">🗑️ Xóa</a>-->
+<!--            </td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+
+<!--    <div th:replace="base :: footer"></div>-->
+<!--</main>-->
+<!--</body>-->
+<!--</html>-->

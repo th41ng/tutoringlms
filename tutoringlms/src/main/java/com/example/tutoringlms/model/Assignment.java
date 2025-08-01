@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public abstract class Assignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private String title;
     private String description;
