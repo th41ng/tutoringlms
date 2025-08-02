@@ -11,7 +11,7 @@ const Register = () => {
     phoneNum: '',
     email: '',
     password: '',
-    role: 'STUDENT',
+    role: 'ROLE_STUDENT',
   });
 
   const [message, setMessage] = useState('');
@@ -120,7 +120,7 @@ const Register = () => {
           <label>Vai trò:</label><br />
           <select name="role" value={formData.role} onChange={handleChange}>
             <option value="ROLE_STUDENT">Học sinh</option>
-            <option value="ROLE_TEACHER">Giáo viên</option>
+            {/* <option value="ROLE_TEACHER">Giáo viên</option> */}
           </select>
         </div>
         <button type="submit">Đăng ký</button>

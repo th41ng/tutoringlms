@@ -1,133 +1,67 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { MyUserContext } from '../../configs/Context';
+import React, { useEffect, useState } from 'react';
+import { Card, Row, Col, Container } from 'react-bootstrap';
 import { authApis } from '../../configs/Apis';
-import { Button, Table, Modal, Form } from 'react-bootstrap';
 
 const TeacherDashboard = () => {
-  const currentUser = useContext(MyUserContext);
-  const [classes, setClasses] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [editingClass, setEditingClass] = useState(null);
-  const [formData, setFormData] = useState({
-    className: '',
-    schedule: ''
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    totalClasses: 0,
+    totalRevenueMonthly: 0,
   });
 
   useEffect(() => {
-    fetchClasses();
+    fetchStats();
   }, []);
 
-  const fetchClasses = async () => {
+  const fetchStats = async () => {
     try {
-      const res = await authApis().get("/teacher/listClasses");
-      setClasses(res.data);
+      // 🧪 Thay bằng gọi API thực tế
+      const fakeStats = {
+        totalStudents: 85,
+        totalClasses: 6,
+        totalRevenueMonthly: 15000000,
+      };
+      setStats(fakeStats);
     } catch (err) {
-      console.error("Lỗi khi tải danh sách lớp:", err);
-    }
-  };
-
-  const handleOpenModal = (classRoom = null) => {
-    if (classRoom) {
-      setEditingClass(classRoom);
-      setFormData({
-        className: classRoom.className,
-        schedule: classRoom.schedule
-      });
-    } else {
-      setEditingClass(null);
-      setFormData({ className: '', schedule: '' });
-    }
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => setShowModal(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (editingClass) {
-        await authApis().put(`/teacher/editClasses/${editingClass.id}`, formData);
-      } else {
-        await authApis().post('/teacher/createClasses', formData);
-      }
-      handleCloseModal();
-      fetchClasses();
-    } catch (err) {
-      console.error("Lỗi khi lưu lớp:", err);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa lớp học này không?")) {
-      try {
-        await authApis().delete(`/teacher/deleteClasses/${id}`);
-        fetchClasses();
-      } catch (err) {
-        console.error("Lỗi khi xóa lớp:", err);
-      }
+      console.error("Lỗi khi tải thống kê:", err);
     }
   };
 
   return (
-    <div>
-      <h2>Giáo viên: Quản lý lớp học</h2>
-      <Button className="mb-3" onClick={() => handleOpenModal()}>+ Thêm lớp mới</Button>
+    <Container className="mt-4">
+      <h2 className="mb-4 text-primary text-center">📊 Thống kê giáo viên</h2>
 
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Tên lớp</th>
-            <th>Lịch học</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {classes.map(cls => (
-            <tr key={cls.id}>
-              <td>{cls.id}</td>
-              <td>{cls.className}</td>
-              <td>{cls.schedule}</td>
-              <td>
-                <Button size="sm" onClick={() => handleOpenModal(cls)}>Sửa</Button>{' '}
-                <Button size="sm" variant="danger" onClick={() => handleDelete(cls.id)}>Xóa</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <Row className="g-4 justify-content-center">
+        <Col md={4}>
+          <Card className="text-center shadow-sm border-0">
+            <Card.Body>
+              <Card.Title className="text-muted">👨‍🎓 Số học sinh</Card.Title>
+              <Card.Text className="fs-2 fw-bold text-dark">{stats.totalStudents}</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
 
-      <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editingClass ? 'Sửa lớp học' : 'Thêm lớp mới'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>Tên lớp</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.className}
-                onChange={(e) => setFormData({ ...formData, className: e.target.value })}
-                required
-              />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>Lịch học</Form.Label>
-              <Form.Control
-                type="text"
-                value={formData.schedule}
-                onChange={(e) => setFormData({ ...formData, schedule: e.target.value })}
-                required
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit">
-              {editingClass ? 'Cập nhật' : 'Tạo mới'}
-            </Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
-    </div>
+        <Col md={4}>
+          <Card className="text-center shadow-sm border-0">
+            <Card.Body>
+              <Card.Title className="text-muted">🏫 Số lớp</Card.Title>
+              <Card.Text className="fs-2 fw-bold text-dark">{stats.totalClasses}</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col md={4}>
+          <Card className="text-center shadow-sm border-0">
+            <Card.Body>
+              <Card.Title className="text-muted">💰 Doanh thu tháng</Card.Title>
+              <Card.Text className="fs-4 fw-bold text-success">
+                {stats.totalRevenueMonthly.toLocaleString()} ₫
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
