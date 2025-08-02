@@ -13,31 +13,38 @@ import axios, { authApis, endpoints } from './configs/Apis';
 
 import Login from "./components/login";
 import Register from "./components/register";
-
+import AdminDashboard from './components/admin/AdminDashboard';
+import ProtectedRoute from "./components/layouts/ProtectedRoute";
+import TeacherDashboard from './components/Teacher/TeacherDashboard';
 
 const App = () => {
   const [user, dispatch] = useReducer(MyUserReducer, null);
+  const [loading, setLoading] = React.useState(true);
 
   useEffect(() => {
     const fetchCurrentUserOnLoad = async () => {
       const token = cookie.load('token');
       if (!token) {
-        dispatch({ type: 'LOGOUT' }); 
+        dispatch({ type: 'logout' });
+        setLoading(false);
         return;
       }
 
-      // try {
-      //   const api = authApis();
-      //   const res = await api.get('/auth/me');
-      //   dispatch({ type: 'LOGIN_SUCCESS', payload: res.data });
-      // } catch (error) {
-      //   console.error('Lỗi lấy thông tin user hiện tại:', error);
-      //   dispatch({ type: 'LOGOUT' });
-      // }
+      try {
+        const res = await authApis().get(endpoints['current_user']);
+        dispatch({ type: 'login', payload: res.data });
+      } catch (err) {
+        dispatch({ type: 'logout' });
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchCurrentUserOnLoad();
-  }, []); 
+  }, []);
+
+  if (loading) return <h3>Loading...</h3>;
+
   return (
     <MyUserContext.Provider value={user}>
       <MyDispatchContext.Provider value={dispatch}>
@@ -47,6 +54,16 @@ const App = () => {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/admin/dashboard" element={
+                <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/teacher/dashboard" element={
+                <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
+                  <TeacherDashboard />
+                </ProtectedRoute>
+              } />
             </Routes>
           </Container>
           <Footer />
@@ -54,6 +71,6 @@ const App = () => {
       </MyDispatchContext.Provider>
     </MyUserContext.Provider>
   );
-}
+};
 
 export default App;

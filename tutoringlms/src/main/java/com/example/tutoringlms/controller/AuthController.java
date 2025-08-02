@@ -7,8 +7,13 @@ import com.example.tutoringlms.model.User;
 import com.example.tutoringlms.service.UserService;
 import com.example.tutoringlms.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
     @RequestMapping("/api/auth")
@@ -34,9 +39,21 @@ public class AuthController {
 
         try {
             String token = jwtUtils.generateToken(user.getUsername());
-            return ResponseEntity.ok(new AuthResponse(token));
+            return ResponseEntity.ok(
+                    new AuthResponse(token, user.getUsername(), user.getRole().name())
+            );
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Lỗi tạo token: " + e.getMessage());
         }
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Chưa đăng nhập");
+
+        User user = userService.findByUsername(userDetails.getUsername());
+        return ResponseEntity.ok(user);
+    }
+
 }

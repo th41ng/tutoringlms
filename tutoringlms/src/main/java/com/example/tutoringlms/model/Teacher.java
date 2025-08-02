@@ -1,5 +1,6 @@
 package com.example.tutoringlms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;
@@ -11,6 +12,7 @@ public class Teacher extends User {
     private String subjectName;
 
     @OneToMany(mappedBy = "teacher")
+    @JsonIgnore
     private List<ClassRoom> classes;
 
     @OneToMany(mappedBy = "teacher")

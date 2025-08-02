@@ -3,6 +3,7 @@ package com.example.tutoringlms.service;
 import com.example.tutoringlms.dto.RegisterRequest;
 import com.example.tutoringlms.enums.Role;
 import com.example.tutoringlms.model.Student;
+import com.example.tutoringlms.model.Teacher;
 import com.example.tutoringlms.model.User;
 import com.example.tutoringlms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -75,4 +76,32 @@ public class UserService {
         }
         userRepo.deleteById(id);
     }
+
+    public User findByUsername(String username) {
+        return userRepo.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng: " + username));
+    }
+
+
+    public User createUserByAdmin(RegisterRequest request) {
+        User user;
+
+        // Tạo đối tượng tương ứng theo vai trò
+        switch (request.getRole()) {
+            case ROLE_STUDENT -> user = new Student();
+            case ROLE_TEACHER -> user = new Teacher();
+            default -> throw new IllegalArgumentException("Vai trò không hợp lệ: " + request.getRole());
+        }
+
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setEmail(request.getEmail());
+        user.setRole(request.getRole());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhoneNum(request.getPhoneNum());
+
+        return userRepo.save(user);
+    }
+
 }

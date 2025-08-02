@@ -18,19 +18,30 @@ const Login = () => {
 
     try {
       const res = await axios.post(endpoints.login, { username, password }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' }
       });
-      const token = res.data.token;
+
+      const { token, username: returnedUsername, role } = res.data;
 
       cookie.save('token', token);
-      dispatch({ type: 'LOGIN_SUCCESS', payload: { username } });
-      navigate('/');  // sửa ở đây
+
+      dispatch({ type: 'LOGIN_SUCCESS', payload: { username: returnedUsername, role } });
+
+      if (role === 'ROLE_ADMIN') {
+      navigate('/admin/dashboard');
+      } else if (role === 'ROLE_TEACHER') {
+      navigate('/teacher/dashboard');
+      } else if (role === 'ROLE_STUDENT') {
+      navigate('/student/home');
+      } else {
+      navigate('/');
+}
+
     } catch (error) {
       setErrorMsg(error.response?.data || 'Đăng nhập thất bại');
     }
   };
+
   return (
     <div>
       <h2>Đăng nhập</h2>
@@ -58,7 +69,6 @@ const Login = () => {
       </form>
     </div>
   );
- 
 };
 
 export default Login;
