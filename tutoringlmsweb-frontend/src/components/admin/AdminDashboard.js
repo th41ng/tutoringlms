@@ -1,13 +1,8 @@
-// src/components/admin/AdminDashboard.js
-
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { authApis, endpoints } from '../../configs/Apis';
-import { MyUserContext } from '../../configs/Context';
 import { Button, Table, Form, Modal } from 'react-bootstrap';
 
 const AdminDashboard = () => {
-  const currentUser = useContext(MyUserContext);
-
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -23,7 +18,7 @@ const AdminDashboard = () => {
 
   const loadUsers = async () => {
     try {
-      const response = await authApis().get(endpoints['list_users']);
+      const response = await authApis().get(endpoints.list_users);
       setUsers(response.data);
     } catch (error) {
       console.error("Lỗi khi tải danh sách người dùng:", error);
@@ -126,7 +121,6 @@ const AdminDashboard = () => {
         </tbody>
       </Table>
 
-      {/* Modal thêm/sửa người dùng */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>{editingUser ? 'Sửa người dùng' : 'Thêm người dùng mới'}</Modal.Title>

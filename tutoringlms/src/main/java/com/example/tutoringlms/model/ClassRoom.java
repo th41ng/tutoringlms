@@ -1,5 +1,6 @@
 package com.example.tutoringlms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;
@@ -13,14 +14,15 @@ public class ClassRoom {
 
     private String className;
     private String schedule;
-
+    @Column(unique = true)
+    private String joinCode;
     @ManyToOne
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
     @OneToMany(mappedBy = "classRoom")
     private List<Student> students;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "classRoom")
     private List<Assignment> assignments;
 

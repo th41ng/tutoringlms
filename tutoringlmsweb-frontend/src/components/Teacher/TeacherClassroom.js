@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MyUserContext } from '../../configs/Context';
-import { authApis } from '../../configs/Apis';
+import { endpoints, authApis } from '../../configs/Apis';
 import {
   Button,
   Table,
@@ -11,7 +10,6 @@ import {
 } from 'react-bootstrap';
 
 const TeacherClassroom = () => {
-  const currentUser = useContext(MyUserContext);
   const navigate = useNavigate();
 
   const [classes, setClasses] = useState([]);
@@ -28,7 +26,7 @@ const TeacherClassroom = () => {
 
   const fetchClasses = async () => {
     try {
-      const res = await authApis().get("/teacher/listClasses");
+      const res = await authApis().get(endpoints.list_classes);
       setClasses(res.data);
     } catch (err) {
       console.error("Lỗi khi tải danh sách lớp:", err);
@@ -55,9 +53,9 @@ const TeacherClassroom = () => {
     e.preventDefault();
     try {
       if (editingClass) {
-        await authApis().put(`/teacher/editClasses/${editingClass.id}`, formData);
+        await authApis().put(endpoints.edit_class(editingClass.id), formData);
       } else {
-        await authApis().post('/teacher/createClasses', formData);
+        await authApis().post(endpoints.create_class, formData);
       }
       handleCloseModal();
       fetchClasses();
@@ -69,7 +67,7 @@ const TeacherClassroom = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa lớp học này không?")) {
       try {
-        await authApis().delete(`/teacher/deleteClasses/${id}`);
+        await authApis().delete(endpoints.delete_class(id));
         fetchClasses();
       } catch (err) {
         console.error("Lỗi khi xóa lớp:", err);
@@ -102,27 +100,13 @@ const TeacherClassroom = () => {
                 <td>{cls.className}</td>
                 <td>{cls.schedule}</td>
                 <td>
-                  <Button
-                    size="sm"
-                    variant="info"
-                    onClick={() => navigate(`/teacher/classroom/${cls.id}`)}
-                    className="me-2"
-                  >
-                    Xem
+                  <Button size="sm" variant="info" onClick={() => navigate(endpoints.class_detail(cls.id))} className="me-2">
+                    Xem chi tiết
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="warning"
-                    onClick={() => handleOpenModal(cls)}
-                    className="me-2"
-                  >
+                  <Button size="sm" variant="warning" onClick={() => handleOpenModal(cls)} className="me-2">
                     Sửa
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={() => handleDelete(cls.id)}
-                  >
+                  <Button size="sm" variant="danger" onClick={() => handleDelete(cls.id)}>
                     Xóa
                   </Button>
                 </td>
@@ -132,7 +116,6 @@ const TeacherClassroom = () => {
         </Table>
       </Card.Body>
 
-      {/* Modal thêm/sửa lớp học */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>{editingClass ? 'Sửa lớp học' : 'Thêm lớp mới'}</Modal.Title>

@@ -4,26 +4,23 @@ import { MyUserContext, MyDispatchContext } from '../../configs/Context';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Header = () => {
-  const user = useContext(MyUserContext);
+  const { user, loading } = useContext(MyUserContext);  // ✅ Lấy cả user và loading
   const dispatch = useContext(MyDispatchContext);
   const navigate = useNavigate();
 
- const handleLogout = () => {
-  dispatch({ type: "logout" });
-
-  // ✅ Delay navigate một chút để đảm bảo context được cập nhật
-  setTimeout(() => {
-    navigate("/");
-  }, 0);
-};
-
+  const handleLogout = () => {
+    dispatch({ type: "logout" });
+    setTimeout(() => {
+      navigate("/");
+    }, 0);
+  };
 
   return (
     <header>
       <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-4">
         <Link className="navbar-brand" to="/">Hệ thống LMS</Link>
 
-        {user && (
+        {!loading && user && (
           <div className="collapse navbar-collapse justify-content-end">
             <ul className="navbar-nav">
               <li className="nav-item">

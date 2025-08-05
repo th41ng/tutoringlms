@@ -116,13 +116,6 @@ const Register = () => {
             required
           />
         </div>
-        <div>
-          <label>Vai trò:</label><br />
-          <select name="role" value={formData.role} onChange={handleChange}>
-            <option value="ROLE_STUDENT">Học sinh</option>
-            {/* <option value="ROLE_TEACHER">Giáo viên</option> */}
-          </select>
-        </div>
         <button type="submit">Đăng ký</button>
       </form>
 

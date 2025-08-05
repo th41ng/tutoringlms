@@ -20,10 +20,6 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     public User register(RegisterRequest request) {
-        if (request.getRole() != Role.ROLE_STUDENT) {
-            throw new IllegalArgumentException("Chỉ học sinh mới được phép đăng ký");
-        }
-
         Student student = new Student();
         student.setUsername(request.getUsername());
         student.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -44,10 +40,6 @@ public class UserService {
 
     public List<User> findAllUsers() {
         return userRepo.findAll();
-    }
-
-    public Optional<User> getUserById(Long id) {
-        return userRepo.findById(id);
     }
 
     public User updateUser(Long id, RegisterRequest request) {
@@ -86,7 +78,6 @@ public class UserService {
     public User createUserByAdmin(RegisterRequest request) {
         User user;
 
-        // Tạo đối tượng tương ứng theo vai trò
         switch (request.getRole()) {
             case ROLE_STUDENT -> user = new Student();
             case ROLE_TEACHER -> user = new Teacher();

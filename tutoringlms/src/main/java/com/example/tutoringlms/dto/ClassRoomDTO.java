@@ -7,5 +7,6 @@ public class ClassRoomDTO {
     private Long id;
     private String className;
     private String schedule;
+    private String joinCode;
     private TeacherDTO teacher;
 }

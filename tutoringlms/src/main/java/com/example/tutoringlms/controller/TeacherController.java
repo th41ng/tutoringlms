@@ -31,7 +31,6 @@ public class TeacherController {
     public ResponseEntity<ClassRoom> createClass(@RequestBody ClassRoom classRoom,
                                                  @AuthenticationPrincipal UserDetails userDetails) {
         Teacher teacher = teacherService.getTeacherEntityByUsername(userDetails.getUsername());
-
         classRoom.setTeacher(teacher);
         return ResponseEntity.ok(classRoomService.createClass(classRoom));
     }
@@ -47,4 +46,18 @@ public class TeacherController {
         classRoomService.deleteClass(id);
         return ResponseEntity.ok("Đã xóa lớp học thành công");
     }
+
+    @GetMapping("/classroom/{id}")
+    public ResponseEntity<ClassRoomDTO> getClassroomInfo(@PathVariable Long id,
+                                                         @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(classRoomService.getClassRoomDTOById(id, userDetails.getUsername()));
+    }
+
+    @GetMapping("/classroom/{id}/students")
+    public ResponseEntity<?> getStudentsInClass(@PathVariable Long id,
+                                                @AuthenticationPrincipal UserDetails userDetails) {
+        List<?> students = classRoomService.getStudentsInClass(id, userDetails.getUsername());
+        return ResponseEntity.ok(students);
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.tutoringlms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 public class Student extends User {
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "class_id")
     private ClassRoom classRoom;
 

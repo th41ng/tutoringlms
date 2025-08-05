@@ -1,14 +1,13 @@
-// src/components/layouts/Sidebar.js
 import React, { useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MyUserContext } from '../../configs/Context';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Sidebar = () => {
-  const user = useContext(MyUserContext);
+  const { user, loading } = useContext(MyUserContext); 
   const location = useLocation();
 
-  if (!user) return null;
+  if (loading || !user) return null; 
 
   let menuItems = [];
 
@@ -20,10 +19,9 @@ const Sidebar = () => {
     menuItems = [
       { to: "/teacher/dashboard", label: "Trang chủ" },
       { to: "/teacher/classroom", label: "Lớp học" },
-      { to: "", label: "Bài tập" },
+      { to: "/assignments/all", label: "Bài tập" },
       { to: "", label: "Học sinh" },
       { to: "", label: "Diễn đàn" },
-
     ];
   } else if (user.role === "ROLE_STUDENT") {
     menuItems = [
@@ -45,11 +43,7 @@ const Sidebar = () => {
           <li className="nav-item mb-2" key={idx}>
             <Link
               to={item.to}
-              className={`nav-link px-3 py-2 rounded ${
-                location.pathname === item.to
-                  ? 'bg-primary text-white'
-                  : 'text-dark'
-              }`}
+              className={`nav-link px-3 py-2 rounded ${location.pathname === item.to ? 'bg-primary text-white' : 'text-dark'}`}
             >
               {item.label}
             </Link>

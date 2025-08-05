@@ -10,4 +10,5 @@ public class EssayAssignment extends Assignment {
 
     @Column(columnDefinition = "TEXT")
     private String question;
+    private String fileUrl;
 }

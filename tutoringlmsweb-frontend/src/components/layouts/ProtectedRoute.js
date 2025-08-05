@@ -3,13 +3,17 @@ import { useContext } from 'react';
 import { MyUserContext } from '../../configs/Context';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const currentUser = useContext(MyUserContext);
+    const { user } = useContext(MyUserContext); 
 
-  if (!currentUser || !allowedRoles.includes(currentUser.role)) {
-    return <Navigate to="/login" />;
-  }
+    console.log("🔐 ProtectedRoute - Context:", { user });
+    console.log("✅ allowedRoles:", allowedRoles);
+    
+    if (!user || !allowedRoles.includes(user.role)) {
+        console.warn("🚫 Truy cập bị từ chối. Chuyển về /login");
+        return <Navigate to="/login" />;
+    }
 
-  return children;
+    return children;
 };
 
 export default ProtectedRoute;
