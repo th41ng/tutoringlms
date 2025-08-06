@@ -3,8 +3,10 @@ package com.example.tutoringlms.service;
 import com.example.tutoringlms.dto.ClassRoomDTO;
 import com.example.tutoringlms.dto.TeacherDTO;
 import com.example.tutoringlms.model.ClassRoom;
+import com.example.tutoringlms.model.Forum;
 import com.example.tutoringlms.model.Teacher;
 import com.example.tutoringlms.repository.ClassRoomRepository;
+import com.example.tutoringlms.repository.ForumRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -19,16 +21,30 @@ import java.util.Optional;
 public class ClassRoomService {
 
     private final ClassRoomRepository classRoomRepository;
+    private final ForumRepository forumRepo;
 
 
+//    public ClassRoom createClass(ClassRoom classRoom) {
+//        String joinCode = generateUniqueJoinCode(6);
+//        classRoom.setJoinCode(joinCode);
+//
+//        return classRoomRepository.save(classRoom);
+//    }
+public ClassRoom createClass(ClassRoom classRoom) {
+    // Tạo mã join code
+    String joinCode = generateUniqueJoinCode(6);
+    classRoom.setJoinCode(joinCode);
 
-    public ClassRoom createClass(ClassRoom classRoom) {
-        String joinCode = generateUniqueJoinCode(6);
-        classRoom.setJoinCode(joinCode);
+    // Lưu lớp học
+    ClassRoom savedClass = classRoomRepository.save(classRoom);
 
-        return classRoomRepository.save(classRoom);
-    }
+    // Tạo diễn đàn cho lớp học
+    Forum forum = new Forum();
+    forum.setClassRoom(savedClass);
+    forumRepo.save(forum);
 
+    return savedClass;
+}
     private String generateUniqueJoinCode(int length) {
         String code;
         do {

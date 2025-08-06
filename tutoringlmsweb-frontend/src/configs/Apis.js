@@ -20,7 +20,7 @@ export const endpoints = {
     "edit_class": (classId) => `teacher/editClasses/${classId}`,
     "delete_class": (classId) => `teacher/deleteClasses/${classId}`,
     "class_detail": (classId) => `/teacher/classroom/${classId}`,
-     // Assignment (cho giáo viên)
+    // Assignment (cho giáo viên)
     "list_assignments": "assignments/all",
     "create_ESassignment": "assignments/createEssay",
     "create_MCassignment": "assignments/create-multiple-choice",
@@ -29,6 +29,16 @@ export const endpoints = {
     "update_assignment": (id) => `assignments/update/${id}`,
     "delete_assignment": (id) => `assignments/delete/${id}`,
     "detail_MCassignment": (id) => `assignments/multiple-choice/${id}`,
+
+
+    // Diễn đàn - Forum
+    "get_all_forums": "forum/all",           // ✅ đúng path backend
+    "get_my_class_forum": "forum/mine",
+    "create_post": "forum/posts",
+    "get_posts_by_class": (classId) => `forum/posts/classroom/${classId}`,
+    "create_comment": "forum/comments",
+    "get_comments_by_post": (postId) => `forum/comments/post/${postId}`,
+
     //Dành cho student
     "join_class": "student/joinClass",
     'student_classroom': 'student/classroom',

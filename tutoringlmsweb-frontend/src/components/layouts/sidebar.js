@@ -4,10 +4,10 @@ import { MyUserContext } from '../../configs/Context';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Sidebar = () => {
-  const { user, loading } = useContext(MyUserContext); 
+  const { user, loading } = useContext(MyUserContext);
   const location = useLocation();
 
-  if (loading || !user) return null; 
+  if (loading || !user) return null;
 
   let menuItems = [];
 
@@ -20,14 +20,15 @@ const Sidebar = () => {
       { to: "/teacher/dashboard", label: "Trang chủ" },
       { to: "/teacher/classroom", label: "Lớp học" },
       { to: "/assignments/all", label: "Bài tập" },
-      { to: "", label: "Học sinh" },
-      { to: "", label: "Diễn đàn" },
+      { to: "/anoucements/all", label: "Thông báo" },
+      { to: "/forum/all", label: "Diễn đàn" }, 
+      { to: "/", label: "Học sinh" },
     ];
   } else if (user.role === "ROLE_STUDENT") {
     menuItems = [
       { to: "/student/home", label: "Trang chủ học sinh" },
       { to: "", label: "Bài tập" },
-      { to: "", label: "Diễn đàn" },
+      { to: "/forum/mine", label: "Diễn đàn" }, 
       { to: "", label: "Thanh toán" },
     ];
   }

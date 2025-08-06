@@ -1,5 +1,6 @@
 package com.example.tutoringlms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -16,10 +17,12 @@ public class Announcement {
     private LocalDateTime createdAt;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "class_id")
     private ClassRoom classRoom;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 }
