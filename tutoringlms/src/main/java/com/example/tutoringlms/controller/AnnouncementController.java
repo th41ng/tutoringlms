@@ -2,7 +2,9 @@ package com.example.tutoringlms.controller;
 
 import com.example.tutoringlms.dto.AnnouncementDTO;
 import com.example.tutoringlms.model.Announcement;
+import com.example.tutoringlms.model.ClassRoom;
 import com.example.tutoringlms.repository.AnnouncementRepository;
+import com.example.tutoringlms.repository.ClassRoomRepository;
 import com.example.tutoringlms.service.AnnouncementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,18 +13,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/teacher/announcements")
+@RequestMapping("/api/announcements")
 @RequiredArgsConstructor
 public class AnnouncementController {
 
     private final AnnouncementService announcementService;
     private final AnnouncementRepository announcementRepo;
-
+    private final ClassRoomRepository classRoomRepo;
     // ✅ Tạo + gửi email
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody AnnouncementDTO dto) {
         announcementService.createAnnouncementAndNotify(dto);
         return ResponseEntity.ok("Tạo thông báo thành công!");
+    }
+
+    //Lấy all cho giáo viên quản lý;
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllAnnouncements() {
+        List<AnnouncementDTO> result = announcementService.getAllAnnouncements();
+        return ResponseEntity.ok(result);
     }
 
     // ✅ Lấy danh sách theo classRoomId
@@ -32,22 +41,16 @@ public class AnnouncementController {
         return ResponseEntity.ok(announcements);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteAnnouncement(@PathVariable Long id) {
         announcementService.deleteAnnouncement(id);
         return ResponseEntity.noContent().build();
     }
 
 
-    // ✅ Sửa thông báo
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody AnnouncementDTO dto) {
-        Announcement ann = announcementRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy thông báo"));
-
-        ann.setTitle(dto.getTitle());
-        ann.setContent(dto.getContent());
-        announcementRepo.save(ann);
-        return ResponseEntity.ok("Đã cập nhật");
+        String result = announcementService.updateAnnouncement(id, dto);
+        return ResponseEntity.ok(result);
     }
 }

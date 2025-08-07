@@ -19,7 +19,7 @@ import CreateEsssayAssign from './components/Teacher/CreateEssayAssign';
 import CreateMCAssignment from './components/Teacher/CreateMCAssignment';
 import EditMCAssignment from './components/Teacher/EditMCAssignment';
 import TeacherClassroomDetail from './components/Teacher/TeacherClassroomDetail';
-
+import Anoucement from './components/Teacher/TeacherAnnouncements';
 import Forum from './components/Teacher/ForumList';
 import StudentHome from './components/Student/StudentHome';
 import ProtectedRoute from './components/layouts/ProtectedRoute';
@@ -96,11 +96,17 @@ const AppRoutes = () => {
                 <Forum />
               </ProtectedRoute>
             } />
+             <Route path="/anoucements/all" element={
+              <Anoucement allowedRoles={['ROLE_TEACHER']}>
+                <Forum />
+              </Anoucement>
+            } />
             <Route path="/forum/posts/my-class" element={
               <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
                 <Forum />
               </ProtectedRoute>
             } />
+
             <Route path="/forums/:id" element={
               <ProtectedRoute allowedRoles={['ROLE_TEACHER', 'ROLE_STUDENT']}>
                 <ForumDetail />

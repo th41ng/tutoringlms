@@ -103,7 +103,8 @@ const ForumDetail = () => {
                 <h5>{post.title}</h5>
                 <p>{post.content}</p>
                 <small className="text-muted">
-                  Ngày tạo: {new Date(post.createdAt).toLocaleString()}
+                  🧑 Đăng bởi: {post.author?.lastName} {post.author?.firstName || "Ẩn danh"} | 🕒{" "}
+                  {new Date(post.createdAt).toLocaleString()}
                 </small>
 
                 <div className="mt-3">
@@ -111,7 +112,9 @@ const ForumDetail = () => {
                   {comments[post.id]?.length > 0 ? (
                     <ul>
                       {comments[post.id].map((cmt, idx) => (
-                        <li key={idx}>{cmt.content}</li>
+                        <li key={idx}>
+                          <strong>{cmt.author?.lastName}  {cmt.author?.firstName }:</strong> {cmt.content}
+                        </li>
                       ))}
                     </ul>
                   ) : (

@@ -1,6 +1,7 @@
 package com.example.tutoringlms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,7 +25,7 @@ public class Comment {
     private Post post;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "author_id")
+    @JsonIgnoreProperties({"posts", "comments", "password", "email"}) // bỏ các field gây vòng lặp
     private User author;
 }

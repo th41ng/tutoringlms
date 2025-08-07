@@ -30,7 +30,10 @@ export const endpoints = {
     "delete_assignment": (id) => `assignments/delete/${id}`,
     "detail_MCassignment": (id) => `assignments/multiple-choice/${id}`,
 
-
+    "create_announcement": "announcements/create",           
+    "all_announcements": "announcements/all",  
+    "delete_announcement":(id) => `announcements/delete/${id}`, 
+    "update_announcement":(id)  =>`announcements/update/${id}`, 
     // Diễn đàn - Forum
     "get_all_forums": "forum/all",           // ✅ đúng path backend
     "get_my_class_forum": "forum/mine",
