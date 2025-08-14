@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface AssignmenRepository extends JpaRepository<Assignment, Long> {
+public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     Optional<Assignment> findById(Long id);
     List<Assignment> findAllByClassRoom_Id(Long classRoomId);
     // Lấy tất cả bài tập tự luận
@@ -20,4 +20,3 @@ public interface AssignmenRepository extends JpaRepository<Assignment, Long> {
     @Query("SELECT m FROM MultipleChoiceAssignment m")
     List<Assignment> findAllMcAssignments();
 }
-

@@ -2,28 +2,23 @@ package com.example.tutoringlms.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Data
+// Bảng cha
 @Entity
-public class Submission {
+@Inheritance(strategy = InheritanceType.JOINED)
+// Hoặc SINGLE_TABLE nếu muốn chung bảng
+public abstract class Submission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "student_id")
+    @ManyToOne @JoinColumn(name = "student_id")
     private Student student;
 
-    @ManyToOne
-    @JoinColumn(name = "assignment_id")
-    private Assignment assignment;
-
-    @Column(columnDefinition = "TEXT")
-    private String content;
-
-    private LocalDateTime submitAt;
-    private Float grade;
+    private LocalDateTime submittedAt;
     private Boolean isLate;
 
     @ManyToOne

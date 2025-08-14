@@ -76,4 +76,15 @@ public class StudentService {
 
         return dto;
     }
+
+    public Student getStudentEntityByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng: " + username));
+
+        if (!(user instanceof Student student)) {
+            throw new IllegalStateException("Người dùng không phải kiểu hs.");
+        }
+
+        return student;
+    }
 }

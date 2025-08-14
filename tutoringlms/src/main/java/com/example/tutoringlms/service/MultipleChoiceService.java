@@ -4,7 +4,7 @@ import com.example.tutoringlms.model.Assignment;
 import com.example.tutoringlms.model.MultipleChoiceAssignment;
 import com.example.tutoringlms.model.Question;
 import com.example.tutoringlms.model.Answer;
-import com.example.tutoringlms.repository.AssignmenRepository;
+import com.example.tutoringlms.repository.AssignmentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MultipleChoiceService {
 
-    private final AssignmenRepository assignmentRepository;
+    private final AssignmentRepository assignmentRepository;
 
     public MultipleChoiceAssignment save(MultipleChoiceAssignment assignment) {
         return assignmentRepository.save(assignment);

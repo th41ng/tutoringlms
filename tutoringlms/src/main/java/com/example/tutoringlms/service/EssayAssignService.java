@@ -4,7 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.tutoringlms.dto.EssayAssignmentDTO;
 import com.example.tutoringlms.model.*;
-import com.example.tutoringlms.repository.AssignmenRepository;
+import com.example.tutoringlms.repository.AssignmentRepository;
 import com.example.tutoringlms.repository.ClassRoomRepository;
 import com.example.tutoringlms.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class EssayAssignService {
 
-    private final AssignmenRepository assignmentRepository;
+    private final AssignmentRepository assignmentRepository;
     private final ClassRoomRepository classRoomRepository;
     private final TeacherRepository teacherRepository;
     private final TeacherService teacherService;

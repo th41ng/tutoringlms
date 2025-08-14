@@ -1,20 +1,16 @@
-    package com.example.tutoringlms.dto;
+package com.example.tutoringlms.dto;
 
-    import com.example.tutoringlms.model.ClassRoom;
-    import com.example.tutoringlms.model.Teacher;
+import lombok.Data;
+import java.time.LocalDateTime;
 
-    import lombok.AllArgsConstructor;
-    import lombok.Data;
-    import lombok.NoArgsConstructor;
-
-    import java.time.LocalDateTime;
-
-    @Data
-    public class EssayAssignmentDTO {
-        private String title;
-        private String description;
-        private LocalDateTime deadline;
-        private Long classRoomId;
-        private String question;
-    }
-
+@Data
+public class EssayAssignmentDTO {
+    private Long id;                // ID của bài tập
+    private String title;            // Tiêu đề
+    private String description;      // Mô tả
+    private LocalDateTime deadline;  // Hạn nộp
+    private Long classRoomId;        // ID lớp học
+    private String question;         // Câu hỏi
+    private String content;
+    private String fileUrl;
+}

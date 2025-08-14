@@ -29,5 +29,4 @@ public abstract class Assignment {
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
-
 }

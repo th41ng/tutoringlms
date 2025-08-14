@@ -15,6 +15,7 @@ public class Student extends User {
     private ClassRoom classRoom;
 
     @OneToMany(mappedBy = "student")
+    @JsonIgnore
     private List<Submission> submissions;
 
     @OneToMany(mappedBy = "student")

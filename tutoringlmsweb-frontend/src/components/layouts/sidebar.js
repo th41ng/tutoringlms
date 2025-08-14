@@ -27,7 +27,7 @@ const Sidebar = () => {
   } else if (user.role === "ROLE_STUDENT") {
     menuItems = [
       { to: "/student/home", label: "Trang chủ học sinh" },
-      { to: "", label: "Bài tập" },
+      { to: "/student/assignments", label: "Bài tập" },
       { to: "/forum/mine", label: "Diễn đàn" }, 
       { to: "", label: "Thanh toán" },
     ];

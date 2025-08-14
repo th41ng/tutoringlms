@@ -28,6 +28,9 @@ import MyUserReducer from './reducers/MyUserReducer';
 import { MyUserContext, MyDispatchContext } from './configs/Context';
 import { authApis, endpoints } from './configs/Apis';
 import TeacherAssignments from './components/Teacher/TeacherAssigment';
+import AssignmentsList from './components/Student/AssignmentsList';
+import EssayAssignmentPage from './components/Student/EssayAssignmentPage';
+import MultipleChoiceAssignmentPage from './components/Student/MultipleChoiceAssignmentPage';
 
 
 const AppRoutes = () => {
@@ -116,6 +119,21 @@ const AppRoutes = () => {
             <Route path="/student/home" element={
               <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
                 <StudentHome />
+              </ProtectedRoute>
+            } />
+             <Route path="/student/assignments" element={
+              <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
+                <AssignmentsList />
+              </ProtectedRoute>
+            } />
+             <Route path="/student/essay/:assignmentId" element={
+              <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
+                <EssayAssignmentPage />
+              </ProtectedRoute>
+            } />
+              <Route path="/student/mc/:assignmentId" element={
+              <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
+                <MultipleChoiceAssignmentPage />
               </ProtectedRoute>
             } />
           </Routes>

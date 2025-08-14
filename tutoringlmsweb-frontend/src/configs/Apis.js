@@ -45,6 +45,7 @@ export const endpoints = {
     //Dành cho student
     "join_class": "student/joinClass",
     'student_classroom': 'student/classroom',
+    "assignments_by_class": (classId) => `submission/class/${classId}`,
 };
 
 export const authApis = () => {

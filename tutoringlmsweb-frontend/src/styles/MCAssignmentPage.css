@@ -1,0 +1,26 @@
+.question-card .form-check {
+  padding: 0.5rem;
+  border-radius: 6px;
+  margin-bottom: 0.3rem;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.question-card .form-check:hover {
+  background-color: #f0f8ff;
+}
+
+.question-card .form-check.selected {
+  background-color: #e0f7fa;
+  border-left: 4px solid #00bcd4;
+}
+
+.question-card .form-check.correct {
+  background-color: #d4edda;
+  border-left: 4px solid #28a745;
+}
+
+.question-card .form-check.incorrect {
+  background-color: #f8d7da;
+  border-left: 4px solid #dc3545;
+}
