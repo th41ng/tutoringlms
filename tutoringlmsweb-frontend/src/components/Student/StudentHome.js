@@ -53,7 +53,7 @@ const StudentHome = () => {
     }
   };
 
-  if (!user) return <p>Đang tải thông tin người dùng...</p>; // 🌀 Loading user
+  if (!user) return <p>Đang tải thông tin người dùng...</p>; 
 
   return (
     <div>

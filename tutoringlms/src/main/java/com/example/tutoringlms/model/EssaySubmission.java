@@ -1,5 +1,6 @@
 package com.example.tutoringlms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -14,6 +15,7 @@ import lombok.EqualsAndHashCode;
 public class EssaySubmission extends Submission {
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "assignment_id")
     private EssayAssignment assignment;
 
@@ -22,8 +24,6 @@ public class EssaySubmission extends Submission {
 
     private String fileUrl;
 
-    private Float grade;
+    private Double grade;
 
-    @ManyToOne @JoinColumn(name = "graded_by")
-    private Teacher gradedBy;
 }

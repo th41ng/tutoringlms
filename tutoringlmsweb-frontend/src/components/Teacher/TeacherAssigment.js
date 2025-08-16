@@ -4,7 +4,7 @@ import { Button, Modal, Form } from "react-bootstrap";
 import { data } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import EditEssayModal from "./EditEssayModal";
-import EditMCAssignment from "./EditMCAssignment"; 
+import EditMCAssignment from "./EditMCAssignment";
 const TeacherAssignments = () => {
     const [classes, setClasses] = useState([]);
     const [assignments, setAssignments] = useState([]);
@@ -126,9 +126,9 @@ const TeacherAssignments = () => {
                                     className="me-2"
                                     onClick={() => {
                                         if (a.type === "ESSAY")
-                                            handleEditClick(a); 
+                                            handleEditClick(a);
                                         else
-                                            navigate(`/edit-mc-assignment/${a.id}`); 
+                                            navigate(`/edit-mc-assignment/${a.id}`);
                                     }}
                                 >
                                     Sửa
@@ -140,21 +140,28 @@ const TeacherAssignments = () => {
                                 >
                                     Xóa
                                 </Button>
+                                <Button
+                                    variant="info"
+                                    size="sm"
+                                    onClick={() => navigate(`/view-submissions/${a.id}?type=${a.type}`)}
+                                >
+                                    Xem điểm
+                                </Button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
-             {selectedAssignment?.type === "ESSAY" && (
-              <EditEssayModal
-                show={showEditModal}
-                handleClose={() => setShowEditModal(false)}
-                assignment={selectedAssignment}
-                setAssignment={setSelectedAssignment}
-                handleSave={handleSaveEdit}
-                classes={classes}
-              />
+            {selectedAssignment?.type === "ESSAY" && (
+                <EditEssayModal
+                    show={showEditModal}
+                    handleClose={() => setShowEditModal(false)}
+                    assignment={selectedAssignment}
+                    setAssignment={setSelectedAssignment}
+                    handleSave={handleSaveEdit}
+                    classes={classes}
+                />
             )}
         </div>
     );

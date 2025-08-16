@@ -1,6 +1,7 @@
 package com.example.tutoringlms.controller;
 
 import com.example.tutoringlms.dto.*;
+import com.example.tutoringlms.enums.AssignmentType;
 import com.example.tutoringlms.mapper.AssignmentMapper;
 import com.example.tutoringlms.model.*;
 import com.example.tutoringlms.service.ClassRoomService;
@@ -20,7 +21,9 @@ import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
     @RequestMapping("/api/assignments")
@@ -176,5 +179,75 @@ public ResponseEntity<EssayAssignment> createEssay(
         dto.setQuestions(questionDTOs);
 
         return ResponseEntity.ok(dto);
+    }
+
+
+    @GetMapping("/{assignmentId}/submissions")
+    public ResponseEntity<?> getSubmissions(
+            @PathVariable Long assignmentId,
+            @RequestParam AssignmentType type
+    ) {
+        if (type == AssignmentType.MULTIPLE_CHOICE) {
+            List<MultipleChoiceSubmission> submissions =
+                    multipleChoiceService.findSubmissionsByAssignment(assignmentId);
+
+            var result = submissions.stream().map(sub -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("studentId", sub.getStudent() != null ? sub.getStudent().getId() : null);
+                map.put("studentName", sub.getStudent() != null ? sub.getStudent().getFirstName() : "Không xác định");
+                map.put("submittedAt", sub.getSubmittedAt());
+                map.put("isLate", sub.getIsLate());
+                map.put("score", sub.getScore() != null ? sub.getScore() : null); // null nếu chưa chấm
+                return map;
+            }).toList();
+
+            return ResponseEntity.ok(result);
+
+        } else if (type == AssignmentType.ESSAY) {
+            List<EssaySubmission> submissions =
+                    essayAssignService.findSubmissionsByAssignment(assignmentId);
+
+            var result = submissions.stream().map(sub -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put("studentId", sub.getStudent() != null ? sub.getStudent().getId() : null);
+                map.put("studentName", sub.getStudent() != null ? sub.getStudent().getFirstName() : "Không xác định");
+                map.put("submittedAt", sub.getSubmittedAt());
+                map.put("isLate", sub.getIsLate());
+                map.put("grade", sub.getGrade() != null ? sub.getGrade() : null); // null nếu chưa chấm
+                map.put("fileUrl", sub.getFileUrl() != null ? sub.getFileUrl() : "");
+                map.put("content", sub.getContent() != null ? sub.getContent() : "");
+                return map;
+            }).toList();
+
+            return ResponseEntity.ok(result);
+        }
+
+        return ResponseEntity.badRequest().body("Invalid assignment type");
+    }
+    @PostMapping("/{assignmentId}/submissions/{studentId}/grade")
+    public ResponseEntity<?> gradeEssaySubmission(
+            @PathVariable Long assignmentId,
+            @PathVariable Long studentId,
+            @RequestBody Map<String, Object> payload,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        try {
+            // Chỉ giáo viên mới được phép chấm điểm
+            Teacher teacher = teacherService.getTeacherEntityByUsername(userDetails.getUsername());
+            if (teacher == null) {
+                return ResponseEntity.status(403).body(Map.of("message", "Không có quyền chấm điểm"));
+            }
+
+            // Lấy grade từ request
+            Double grade = Double.valueOf(payload.get("grade").toString());
+
+            // Gọi service để cập nhật điểm
+            essayAssignService.updateGrade(assignmentId, studentId, grade);
+
+            return ResponseEntity.ok(Map.of("message", "Cập nhật điểm thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(Map.of("message", "Lỗi khi cập nhật điểm", "error", e.getMessage()));
+        }
     }
 }

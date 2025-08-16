@@ -21,8 +21,6 @@ public class Teacher extends User {
     @OneToMany(mappedBy = "teacher")
     private List<Announcement> announcements;
 
-    @OneToMany(mappedBy = "gradedBy")
-    private List<Submission> gradedSubmissions;
 
     @OneToMany(mappedBy = "author")
     private List<Post> posts;

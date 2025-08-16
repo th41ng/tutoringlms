@@ -2,18 +2,22 @@ import { Navigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { MyUserContext } from '../../configs/Context';
 
-const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { user } = useContext(MyUserContext); 
+const ProtectedRoute = ({ allowedRoles, children }) => {
+  const { user } = useContext(MyUserContext);
 
-    console.log("🔐 ProtectedRoute - Context:", { user });
-    console.log("✅ allowedRoles:", allowedRoles);
-    
-    if (!user || !allowedRoles.includes(user.role)) {
-        console.warn("🚫 Truy cập bị từ chối. Chuyển về /login");
-        return <Navigate to="/login" />;
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  // Nếu có cấu hình allowedRoles thì mới check role
+  if (allowedRoles && allowedRoles.length > 0) {
+    if (!allowedRoles.includes(user.role)) {
+      return <Navigate to="/login" />;
     }
+  }
 
-    return children;
+  return children;
 };
+
 
 export default ProtectedRoute;

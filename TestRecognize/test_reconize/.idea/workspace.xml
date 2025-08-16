@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="1b3c76b2-ebff-45be-9858-190f6f59e7c2" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/TutoringlmsApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/TutoringlmsApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/config/WebSecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/config/WebSecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/controller/AssignmentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/controller/AssignmentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/controller/TeacherController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/controller/TeacherController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/dto/ClassRoomDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/dto/ClassRoomDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/filter/JwtFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/filter/JwtFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/AttendanceRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/AttendanceRecord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/ClassRoom.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/ClassRoom.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/EssaySubmission.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/EssaySubmission.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/Payment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/Student.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/Submission.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/Submission.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/Teacher.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/model/Teacher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/repository/EssaySubmissionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/repository/EssaySubmissionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/repository/MultipleChoiceSubmissionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/repository/MultipleChoiceSubmissionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/repository/StudentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/repository/StudentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/service/ClassRoomService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/service/ClassRoomService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/service/EssayAssignService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/service/EssayAssignService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/service/MultipleChoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlms/src/main/java/com/example/tutoringlms/service/MultipleChoiceService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/Student/StudentHome.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/Student/StudentHome.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/Teacher/CreateMCAssignment.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/Teacher/CreateMCAssignment.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/Teacher/TeacherAssigment.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/Teacher/TeacherAssigment.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/Teacher/TeacherClassroom.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/Teacher/TeacherClassroom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/Teacher/TeacherClassroomDetail.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/Teacher/TeacherClassroomDetail.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/layouts/ProtectedRoute.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/layouts/ProtectedRoute.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/layouts/sidebar.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../tutoringlmsweb-frontend/src/components/layouts/sidebar.js" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "th41ng"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/th41ng/tutoringlms.git",
+    "accountId": "38db4145-4093-4d8a-ba4b-8fb989f1ddff"
+  }
+}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
+  <component name="ProjectId" id="2zPsQYZ1URr7fEQBHFAWQV8h4bz" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.recognize.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/Admin/IdeaProjects/DoAnNganh/TestRecognize/test_reconize",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-6a3326d57233-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.24807.21" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="1b3c76b2-ebff-45be-9858-190f6f59e7c2" name="Changes" comment="" />
+      <created>1751644027204</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1751644027204</updated>
+    </task>
+    <servers />
+  </component>
+</project>

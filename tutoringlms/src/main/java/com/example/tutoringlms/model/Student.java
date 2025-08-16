@@ -19,9 +19,11 @@ public class Student extends User {
     private List<Submission> submissions;
 
     @OneToMany(mappedBy = "student")
+    @JsonIgnore
     private List<Payment> payments;
 
     @OneToMany(mappedBy = "student")
+    @JsonIgnore
     private List<AttendanceRecord> attendanceRecords;
 
     @OneToMany(mappedBy = "author")

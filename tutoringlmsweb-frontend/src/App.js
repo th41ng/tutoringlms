@@ -31,7 +31,10 @@ import TeacherAssignments from './components/Teacher/TeacherAssigment';
 import AssignmentsList from './components/Student/AssignmentsList';
 import EssayAssignmentPage from './components/Student/EssayAssignmentPage';
 import MultipleChoiceAssignmentPage from './components/Student/MultipleChoiceAssignmentPage';
-
+import ViewSubmissions from './components/Teacher/ViewSubmissions';
+import FaceAttendance from './components/FaceAttendance';
+import StudentPaymentsPage from './components/Student/StudentPaymentsPage';
+import TeacherPaymentInfo from './components/Teacher/TeacherPaymentInfo';
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -99,11 +102,23 @@ const AppRoutes = () => {
                 <Forum />
               </ProtectedRoute>
             } />
-             <Route path="/anoucements/all" element={
+            <Route path="/payment_info" element={
+              <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
+                <TeacherPaymentInfo />
+              </ProtectedRoute>
+            } />
+            <Route path="/anoucements/all" element={
               <Anoucement allowedRoles={['ROLE_TEACHER']}>
                 <Forum />
               </Anoucement>
             } />
+
+            <Route path="/view-submissions/:assignmentId" element={
+              <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
+                <ViewSubmissions />
+              </ProtectedRoute>
+            } />
+
             <Route path="/forum/posts/my-class" element={
               <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
                 <Forum />
@@ -121,20 +136,30 @@ const AppRoutes = () => {
                 <StudentHome />
               </ProtectedRoute>
             } />
-             <Route path="/student/assignments" element={
+            <Route path="/student/assignments" element={
               <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
                 <AssignmentsList />
               </ProtectedRoute>
             } />
-             <Route path="/student/essay/:assignmentId" element={
+            <Route path="/student/essay/:assignmentId" element={
               <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
                 <EssayAssignmentPage />
               </ProtectedRoute>
             } />
-              <Route path="/student/mc/:assignmentId" element={
+            <Route path="/student/mc/:assignmentId" element={
               <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
                 <MultipleChoiceAssignmentPage />
               </ProtectedRoute>
+            } />
+            <Route path="/student/payments" element={
+              <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
+                <StudentPaymentsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/attendance" element={
+
+              <FaceAttendance />
+
             } />
           </Routes>
         </Container>

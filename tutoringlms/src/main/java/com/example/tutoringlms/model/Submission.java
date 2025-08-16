@@ -21,7 +21,4 @@ public abstract class Submission {
     private LocalDateTime submittedAt;
     private Boolean isLate;
 
-    @ManyToOne
-    @JoinColumn(name = "graded_by")
-    private Teacher gradedBy;
 }

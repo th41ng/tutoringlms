@@ -24,6 +24,9 @@ public class JwtFilter implements Filter {
             throws IOException, ServletException {
 
         HttpServletRequest req = (HttpServletRequest) request;
+
+
+
         String header = req.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
@@ -32,18 +35,17 @@ public class JwtFilter implements Filter {
                 String username = jwtUtils.validateTokenAndGetUsername(token);
                 if (username != null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
                     UsernamePasswordAuthenticationToken auth =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails, null, userDetails.getAuthorities());
-
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             } catch (Exception e) {
-                e.printStackTrace(); // Ghi log cho dễ debug
+                e.printStackTrace(); // log lỗi
             }
         }
 
         chain.doFilter(request, response);
     }
+
 }

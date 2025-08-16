@@ -2,19 +2,21 @@ package com.example.tutoringlms.service;
 
 import com.example.tutoringlms.dto.ClassRoomDTO;
 import com.example.tutoringlms.dto.TeacherDTO;
+import com.example.tutoringlms.mapper.ClassRoomMapper;
 import com.example.tutoringlms.model.ClassRoom;
+import com.example.tutoringlms.model.ClassSession;
 import com.example.tutoringlms.model.Forum;
 import com.example.tutoringlms.model.Teacher;
 import com.example.tutoringlms.repository.ClassRoomRepository;
+import com.example.tutoringlms.repository.ClassSessionRepository;
 import com.example.tutoringlms.repository.ForumRepository;
+import com.example.tutoringlms.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class ClassRoomService {
 
     private final ClassRoomRepository classRoomRepository;
     private final ForumRepository forumRepo;
-
+    private  final ClassSessionRepository classSessionRepository;
 
 //    public ClassRoom createClass(ClassRoom classRoom) {
 //        String joinCode = generateUniqueJoinCode(6);
@@ -30,15 +32,40 @@ public class ClassRoomService {
 //
 //        return classRoomRepository.save(classRoom);
 //    }
-public ClassRoom createClass(ClassRoom classRoom) {
-    // Tạo mã join code
-    String joinCode = generateUniqueJoinCode(6);
-    classRoom.setJoinCode(joinCode);
+public ClassRoom createClass(ClassRoomDTO dto, Teacher teacher, LocalDate startDate, int weeks) {
+    ClassRoom classRoom = new ClassRoom();
+    classRoom.setClassName(dto.getClassName());
 
-    // Lưu lớp học
+    // Tạo mã join code
+    classRoom.setJoinCode(generateUniqueJoinCode(6));
+    classRoom.setTeacher(teacher);
+
     ClassRoom savedClass = classRoomRepository.save(classRoom);
 
-    // Tạo diễn đàn cho lớp học
+    if (dto.getSessions() != null) {
+        List<ClassSession> sessionList = new ArrayList<>();
+
+        for (int week = 0; week < weeks; week++) {
+            for (ClassRoomDTO.SessionDTO s : dto.getSessions()) {
+                // Tính ngày cụ thể
+                LocalDate sessionDate = startDate.with(java.time.temporal.TemporalAdjusters.nextOrSame(s.getDayOfWeek()))
+                        .plusWeeks(week);
+
+                ClassSession session = new ClassSession();
+                session.setClassRoom(savedClass);
+                session.setDayOfWeek(s.getDayOfWeek());
+                session.setStartTime(s.getStartTime());
+                session.setEndTime(s.getEndTime());
+                session.setDate(sessionDate);
+
+                sessionList.add(classSessionRepository.save(session));
+            }
+        }
+
+        savedClass.setSessions(sessionList);
+    }
+
+    // Tạo forum cho lớp
     Forum forum = new Forum();
     forum.setClassRoom(savedClass);
     forumRepo.save(forum);
@@ -72,27 +99,14 @@ public ClassRoom createClass(ClassRoom classRoom) {
     public void deleteClass(Long id) {
         classRoomRepository.deleteById(id);
     }
+
+
     public ClassRoomDTO getClassRoomDTOById(Long id, String username) {
         ClassRoom classRoom = classRoomRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lớp học"));
-
-        Teacher teacher = classRoom.getTeacher();
-        TeacherDTO teacherDTO = new TeacherDTO();
-        teacherDTO.setId(teacher.getId());
-        teacherDTO.setUsername(teacher.getUsername());
-        teacherDTO.setFullName(teacher.getFirstName() + " " + teacher.getLastName());
-        teacherDTO.setEmail(teacher.getEmail());
-        teacherDTO.setPhoneNum(teacher.getPhoneNum());
-
-        ClassRoomDTO dto = new ClassRoomDTO();
-        dto.setId(classRoom.getId());
-        dto.setClassName(classRoom.getClassName());
-        dto.setSchedule(classRoom.getSchedule());
-        dto.setJoinCode(classRoom.getJoinCode());
-        dto.setTeacher(teacherDTO);
-
-        return dto;
+        return ClassRoomMapper.toDTO(classRoom);
     }
+
     public List<Map<String, Object>> getStudentsInClass(Long classId, String teacherUsername) {
         ClassRoom classRoom = classRoomRepository.findById(classId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lớp học"));
@@ -114,4 +128,5 @@ public ClassRoom createClass(ClassRoom classRoom) {
         return classRoomRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lớp học với ID = " + id));
     }
+
 }

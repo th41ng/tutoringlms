@@ -1,10 +1,9 @@
 package com.example.tutoringlms.service;
 
-import com.example.tutoringlms.model.Assignment;
-import com.example.tutoringlms.model.MultipleChoiceAssignment;
-import com.example.tutoringlms.model.Question;
-import com.example.tutoringlms.model.Answer;
+import com.example.tutoringlms.model.*;
 import com.example.tutoringlms.repository.AssignmentRepository;
+import com.example.tutoringlms.repository.EssaySubmissionRepository;
+import com.example.tutoringlms.repository.MultipleChoiceSubmissionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ import java.util.Optional;
 public class MultipleChoiceService {
 
     private final AssignmentRepository assignmentRepository;
-
+    private final MultipleChoiceSubmissionRepository multipleChoiceSubmissionRepository;
     public MultipleChoiceAssignment save(MultipleChoiceAssignment assignment) {
         return assignmentRepository.save(assignment);
     }
@@ -57,5 +56,8 @@ public class MultipleChoiceService {
         assignmentRepository.deleteById(id);
     }
 
-
+    // MultipleChoiceService.java
+    public List<MultipleChoiceSubmission> findSubmissionsByAssignment(Long assignmentId) {
+        return multipleChoiceSubmissionRepository.findByAssignmentId(assignmentId);
+    }
 }

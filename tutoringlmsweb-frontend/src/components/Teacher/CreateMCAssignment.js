@@ -108,7 +108,7 @@ const CreateMCAssignment = () => {
       navigate("/teacher/assignments");
     } catch (err) {
       console.error("Lỗi khi tạo bài trắc nghiệm:", err);
-      alert("Đã xảy ra lỗi!");
+      alert("Đã xảy ra lỗi!");  
     }
   };
 

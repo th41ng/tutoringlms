@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Face Recognition Test</title>
+</head>
+<body>
+  <h2>Test Face Recognition</h2>
+  <input type="file" id="fileInput" accept="image/*" />
+  <button onclick="sendImage()">Gửi ảnh</button>
+  <p id="result">Kết quả sẽ hiển thị ở đây</p>
+
+  <script>
+    function sendImage() {
+      const input = document.getElementById("fileInput");
+      const file = input.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = function () {
+        fetch("http://localhost:5000/recognize", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: reader.result })
+        })
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("result").textContent = "Kết quả: " + (data.name || "Không nhận diện được");
+        })
+        .catch(err => {
+          document.getElementById("result").textContent = "Lỗi: " + err;
+        });
+      };
+
+      if (file) reader.readAsDataURL(file);
+    }
+  </script>
+</body>
+</html>

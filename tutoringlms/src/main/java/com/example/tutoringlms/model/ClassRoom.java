@@ -31,4 +31,7 @@ public class ClassRoom {
 
     @OneToOne(mappedBy = "classRoom", cascade = CascadeType.ALL)
     private Forum forum;
+
+    @OneToMany(mappedBy = "classRoom", cascade = CascadeType.ALL)
+    private List<ClassSession> sessions; // Thời khóa biểu
 }

@@ -22,14 +22,14 @@ const Sidebar = () => {
       { to: "/assignments/all", label: "Bài tập" },
       { to: "/anoucements/all", label: "Thông báo" },
       { to: "/forum/all", label: "Diễn đàn" }, 
-      { to: "/", label: "Học sinh" },
+      { to: "/payment_info", label: "Học phí" },
     ];
   } else if (user.role === "ROLE_STUDENT") {
     menuItems = [
       { to: "/student/home", label: "Trang chủ học sinh" },
       { to: "/student/assignments", label: "Bài tập" },
       { to: "/forum/mine", label: "Diễn đàn" }, 
-      { to: "", label: "Thanh toán" },
+      { to: "/student/payments", label: "Thanh toán" },
     ];
   }
 

@@ -4,9 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.tutoringlms.dto.EssayAssignmentDTO;
 import com.example.tutoringlms.model.*;
-import com.example.tutoringlms.repository.AssignmentRepository;
-import com.example.tutoringlms.repository.ClassRoomRepository;
-import com.example.tutoringlms.repository.TeacherRepository;
+import com.example.tutoringlms.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,8 +18,8 @@ public class EssayAssignService {
 
     private final AssignmentRepository assignmentRepository;
     private final ClassRoomRepository classRoomRepository;
-    private final TeacherRepository teacherRepository;
-    private final TeacherService teacherService;
+    private final MultipleChoiceSubmissionRepository multipleChoiceSubmissionRepository;
+    private final EssaySubmissionRepository  essaySubmissionRepository;
     private final Cloudinary cloudinary;
 
     public List<Assignment> getAllEsAssignments() {
@@ -70,27 +68,41 @@ public class EssayAssignService {
         assignmentRepository.deleteById(id);
     }
 
-    public String uploadFile(MultipartFile file) throws IOException {
-        String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
-        String fileNameWithoutExtension = originalFilename.replaceAll("\\.[^.]+$", "");
-        String resourceType = determineResourceType(originalFilename);
+        public String uploadFile(MultipartFile file) throws IOException {
+            String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
+            String fileNameWithoutExtension = originalFilename.replaceAll("\\.[^.]+$", "");
+            String resourceType = determineResourceType(originalFilename);
 
-        Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
-                "resource_type", resourceType,
-                "public_id", fileNameWithoutExtension
-        ));
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "resource_type", resourceType,
+                    "public_id", fileNameWithoutExtension
+            ));
 
-        return uploadResult.get("secure_url").toString();
+            return uploadResult.get("secure_url").toString();
+        }
+
+        private String determineResourceType(String filename) {
+            String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
+
+            return switch (extension) {
+                case "pdf", "doc", "docx", "txt" -> "raw";
+                case "jpg", "jpeg", "png", "gif" -> "image";
+                case "mp4", "mp3" -> "video";
+                default -> "auto";
+            };
+        }
+    public List<EssaySubmission> findSubmissionsByAssignment(Long assignmentId) {
+        return essaySubmissionRepository.findByAssignmentId(assignmentId);
     }
 
-    private String determineResourceType(String filename) {
-        String extension = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
 
-        return switch (extension) {
-            case "pdf", "doc", "docx", "txt" -> "raw";
-            case "jpg", "jpeg", "png", "gif" -> "image";
-            case "mp4", "mp3" -> "video";
-            default -> "auto";
-        };
+
+    public void updateGrade(Long assignmentId, Long studentId, Double grade) {
+        EssaySubmission submission = essaySubmissionRepository
+                .findByAssignmentIdAndStudentId(assignmentId, studentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy bài nộp"));
+
+        submission.setGrade(grade);
+        essaySubmissionRepository.save(submission);
     }
 }
