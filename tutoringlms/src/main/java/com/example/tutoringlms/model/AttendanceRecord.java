@@ -25,4 +25,6 @@ public class AttendanceRecord {
     @ManyToOne
     @JoinColumn(name = "session_id", nullable = false)
     private ClassSession session; // Buổi học mà học sinh điểm danh
+
+
 }

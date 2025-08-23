@@ -19,6 +19,7 @@ public class ClassRoomDTO {
     private int weeks;           // số tuần của khóa học
     @Data
     public static class SessionDTO {
+        private Long id;
         private LocalDate date;        // ngày cụ thể
         private DayOfWeek dayOfWeek;
         private LocalTime startTime;

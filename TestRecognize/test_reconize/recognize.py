@@ -3,7 +3,8 @@ from flask_cors import CORS
 import face_recognition, cv2, numpy as np, base64, pickle, cloudinary, cloudinary.uploader
 
 app = Flask(__name__)
-CORS(app)
+# Cho phép React (chạy ở cổng 3000) gọi API Flask
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 cloudinary.config(
   cloud_name="dxxwcby8l",

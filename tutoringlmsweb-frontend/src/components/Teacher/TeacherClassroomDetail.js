@@ -1,119 +1,206 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Card, Table, Form, Button } from 'react-bootstrap';
-import { authApis } from '../../configs/Apis';
-import dayjs from 'dayjs';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import {
+  Card,
+  Table,
+  Form,
+  Button,
+  Modal,
+  Badge,
+  Image,
+  Row,
+  Col,
+} from "react-bootstrap";
+import { authApis } from "../../configs/Apis";
+import dayjs from "dayjs";
 
 const ClassroomDetail = () => {
   const { id } = useParams();
   const [classInfo, setClassInfo] = useState(null);
   const [students, setStudents] = useState([]);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  // Attendance modal
+  const [showModal, setShowModal] = useState(false);
+  const [attendanceList, setAttendanceList] = useState([]);
+  const [selectedSession, setSelectedSession] = useState(null);
 
   useEffect(() => {
-    fetchClassDetail();
-    fetchStudents();
-  }, []);
+    loadClassDetail();
+    loadStudents();
+  }, [id]);
 
-  const fetchClassDetail = async () => {
-  try {
-    const res = await authApis().get(`/teacher/classroom/${id}`);
-    setClassInfo(res.data);
+  const loadClassDetail = async () => {
+    try {
+      const res = await authApis().get(`/teacher/classroom/${id}`);
+      const data = res.data;
+      setClassInfo(data);
 
-    if (res.data.sessions && res.data.sessions.length > 0) {
-      // Lấy ngày nhỏ nhất trong tuần
-      const minDate = res.data.sessions.reduce((min, s) =>
-        !min || dayjs(s.date).isBefore(min) ? s.date : min, null
-      );
+      if (data.sessions?.length > 0) {
+        const minDate = data.sessions.reduce(
+          (min, s) => (!min || dayjs(s.date).isBefore(min) ? s.date : min),
+          null
+        );
 
-      const start = dayjs(minDate);
-      const end = start.add(6, 'day'); // chỉ 1 tuần
-      setStartDate(start.format('YYYY-MM-DD'));
-      setEndDate(end.format('YYYY-MM-DD'));
+        const start = dayjs(minDate);
+        const end = start.add(6, "day");
+
+        setStartDate(start.format("YYYY-MM-DD"));
+        setEndDate(end.format("YYYY-MM-DD"));
+      }
+    } catch (err) {
+      console.error("❌ Lỗi khi lấy thông tin lớp:", err);
+      alert("Không thể tải thông tin lớp học");
     }
-  } catch (err) {
-    console.error("Lỗi khi lấy thông tin lớp:", err);
-  }
-};
-  const fetchStudents = async () => {
+  };
+
+  const loadStudents = async () => {
     try {
       const res = await authApis().get(`/teacher/classroom/${id}/students`);
       setStudents(res.data);
     } catch (err) {
-      console.error("Lỗi khi lấy danh sách học sinh:", err);
+      console.error("❌ Lỗi khi lấy danh sách học sinh:", err);
+      alert("Không thể tải danh sách học sinh");
     }
   };
 
+  const handleDeleteStudent = async (studentId) => {
+    if (!window.confirm("Bạn có chắc muốn xóa học sinh này khỏi lớp?")) return;
+    try {
+      await authApis().delete(`/teacher/classroom/${id}/students/${studentId}`);
+      setStudents((prev) => prev.filter((s) => s.id !== studentId));
+    } catch (err) {
+      console.error("❌ Lỗi khi xóa học sinh:", err);
+      alert("Không thể xóa học sinh");
+    }
+  };
+
+  const openAttendanceModal = async (session) => {
+    setSelectedSession(session);
+    try {
+      const res = await authApis().get(`/teacher/attendance/${session.id}`);
+      setAttendanceList(res.data);
+    } catch (err) {
+      console.error("❌ Lỗi khi lấy dữ liệu điểm danh:", err);
+      setAttendanceList([]);
+    }
+    setShowModal(true);
+  };
+
   const renderScheduleTable = () => {
-  if (!startDate || !endDate) return null;
+    if (!startDate || !endDate) return null;
 
-  const start = dayjs(startDate);
-  const end = dayjs(endDate);
-  const days = [];
-  for (let d = start; d.isBefore(end.add(1, 'day')); d = d.add(1, 'day')) {
-    days.push(d);
-  }
+    const start = dayjs(startDate);
+    const end = dayjs(endDate);
+    const days = [];
+
+    for (let d = start; d.isBefore(end.add(1, "day")); d = d.add(1, "day")) {
+      days.push(d);
+    }
+
+    return (
+      <Table bordered hover responsive className="text-center align-middle">
+        <thead className="table-light">
+          <tr>
+            {days.map((d) => (
+              <th key={d.format("YYYY-MM-DD")}>{d.format("DD/MM/YYYY")}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {days.map((d) => {
+              const sessionsInDay =
+                classInfo.sessions?.filter(
+                  (s) => s.date === d.format("YYYY-MM-DD")
+                ) || [];
+              return (
+                <td key={d.format("YYYY-MM-DD")}>
+                  {sessionsInDay.length > 0 ? (
+                    sessionsInDay.map((s) => (
+                      <Button
+                        key={s.id}
+                        variant="outline-primary"
+                        size="sm"
+                        className="d-block mb-2"
+                        onClick={() => openAttendanceModal(s)}
+                      >
+                        {s.startTime} - {s.endTime}
+                      </Button>
+                    ))
+                  ) : (
+                    <span className="text-muted">—</span>
+                  )}
+                </td>
+              );
+            })}
+          </tr>
+        </tbody>
+      </Table>
+    );
+  };
+
+  if (!classInfo)
+    return <h4 className="text-center mt-4">⏳ Đang tải thông tin lớp...</h4>;
 
   return (
-    <Table bordered size="sm">
-      <thead>
-        <tr>
-          {days.map(d => <th key={d.format('YYYY-MM-DD')}>{d.format('DD/MM/YYYY')}</th>)}
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          {days.map(d => {
-            const sessionsInDay = classInfo.sessions?.filter(s => s.date === d.format('YYYY-MM-DD'));
-            return (
-              <td key={d.format('YYYY-MM-DD')}>
-                {sessionsInDay && sessionsInDay.length > 0 ? (
-                  sessionsInDay.map((s, idx) => (
-                    <div key={idx}>{s.startTime} - {s.endTime}</div>
-                  ))
-                ) : (
-                  <span>Không có buổi học</span>
-                )}
-              </td>
-            )
-          })}
-        </tr>
-      </tbody>
-    </Table>
-  )
-};
-
-  if (!classInfo) return <h4>Đang tải thông tin lớp...</h4>;
-
-  return (
-    <div>
-      <h2 className="mb-4">Chi tiết lớp học: {classInfo.className}</h2>
-
-      <Card className="mb-4">
-        <Card.Header>Thông tin lớp</Card.Header>
+    <div className="container mt-4">
+      {/* Header */}
+      <Card className="mb-4 shadow-sm border-0">
         <Card.Body>
-          <p><strong>Mã lớp:</strong> {classInfo.joinCode}</p>
+          <h2 className="fw-bold text-primary">📘 {classInfo.className}</h2>
+          <p className="mb-0">
+            <strong>Mã lớp:</strong>{" "}
+            <Badge bg="info" text="dark">
+              {classInfo.joinCode}
+            </Badge>
+          </p>
+        </Card.Body>
+      </Card>
 
-          <Form className="mb-3 d-flex align-items-center">
-            <Form.Label className="me-2 mb-0">Từ ngày:</Form.Label>
-            <Form.Control type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
-            <Form.Label className="ms-3 me-2 mb-0">Đến ngày:</Form.Label>
-            <Form.Control type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
-          </Form>
+      {/* Schedule */}
+      <Card className="mb-4 shadow-sm">
+        <Card.Header className="fw-bold bg-light">📅 Thời khóa biểu</Card.Header>
+        <Card.Body>
+          <Row className="mb-3">
+            <Col md={4}>
+              <Form.Group>
+                <Form.Label>Từ ngày</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group>
+                <Form.Label>Đến ngày</Form.Label>
+                <Form.Control
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
 
           {renderScheduleTable()}
         </Card.Body>
       </Card>
 
-      <Card>
-        <Card.Header>Danh sách học sinh</Card.Header>
-        <Table striped bordered hover responsive className="m-0">  
-          <thead>
+      {/* Students */}
+      <Card className="shadow-sm">
+        <Card.Header className="fw-bold bg-light">👨‍🎓 Danh sách học sinh</Card.Header>
+        <Table striped bordered hover responsive className="m-0 text-center align-middle">
+          <thead className="table-light">
             <tr>
-              <th>STT</th>
+              <th>#</th>
               <th>Tên đăng nhập</th>
               <th>Họ tên</th>
+              <th>Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -122,11 +209,73 @@ const ClassroomDetail = () => {
                 <td>{idx + 1}</td>
                 <td>{s.username}</td>
                 <td>{s.fullName}</td>
+                <td>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => handleDeleteStudent(s.id)}
+                  >
+                    Xóa
+                  </Button>
+                </td>
               </tr>
             ))}
           </tbody>
         </Table>
       </Card>
+
+      {/* Attendance Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            📌 Điểm danh ngày {selectedSession?.date} (
+            {selectedSession?.startTime} - {selectedSession?.endTime})
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {attendanceList.length === 0 ? (
+            <p className="text-muted">⚠️ Không có dữ liệu điểm danh</p>
+          ) : (
+            <Table bordered hover responsive className="text-center align-middle">
+              <thead className="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Họ tên</th>
+                  <th>Trạng thái</th>
+                  <th>Ảnh điểm danh</th>
+                </tr>
+              </thead>
+              <tbody>
+                {attendanceList.map((a, idx) => (
+                  <tr key={a.id}>
+                    <td>{idx + 1}</td>
+                    <td>{a.studentName}</td>
+                    <td>
+                      {a.present ? (
+                        <Badge bg="success">Có mặt</Badge>
+                      ) : (
+                        <Badge bg="danger">Vắng</Badge>
+                      )}
+                    </td>
+                    <td>
+                      {a.capturedFaceImage ? (
+                        <Image src={a.capturedFaceImage} width={60} height={60} rounded />
+                      ) : (
+                        <span className="text-muted">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Đóng
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

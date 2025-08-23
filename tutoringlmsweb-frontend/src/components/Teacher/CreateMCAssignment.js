@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Form, Card } from "react-bootstrap";
+import { Button, Form, Table } from "react-bootstrap";
 import { authApis, endpoints } from "../../configs/Apis";
 import { useNavigate } from "react-router-dom";
 
@@ -15,16 +15,15 @@ const CreateMCAssignment = () => {
   const [classes, setClasses] = useState([]);
   const navigate = useNavigate();
 
-  const fetchClasses = async () => {
-    try {
-      const res = await authApis().get(endpoints.list_classes);
-      setClasses(res.data);
-    } catch (err) {
-      console.error("Lỗi khi tải danh sách lớp:", err);
-    }
-  };
-
   useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const res = await authApis().get(endpoints.list_classes);
+        setClasses(res.data);
+      } catch (err) {
+        console.error("Lỗi khi tải danh sách lớp:", err);
+      }
+    };
     fetchClasses();
   }, []);
 
@@ -33,10 +32,7 @@ const CreateMCAssignment = () => {
       ...prev,
       questions: [
         ...prev.questions,
-        {
-          questionText: "",
-          answers: [{ answerText: "", isCorrect: false }],
-        },
+        { questionText: "", answers: [{ answerText: "", isCorrect: false }] },
       ],
     }));
   };
@@ -90,8 +86,7 @@ const CreateMCAssignment = () => {
         alert(`Câu hỏi ${i + 1} không có đáp án.`);
         return false;
       }
-      const correctCount = q.answers.filter((a) => a.isCorrect).length;
-      if (correctCount === 0) {
+      if (q.answers.filter((a) => a.isCorrect).length === 0) {
         alert(`Câu hỏi ${i + 1} phải có ít nhất 1 đáp án đúng.`);
         return false;
       }
@@ -108,20 +103,24 @@ const CreateMCAssignment = () => {
       navigate("/teacher/assignments");
     } catch (err) {
       console.error("Lỗi khi tạo bài trắc nghiệm:", err);
-      alert("Đã xảy ra lỗi!");  
+      alert("Đã xảy ra lỗi!");
     }
   };
 
   return (
     <div className="container mt-4">
-      <h2>Tạo bài tập trắc nghiệm</h2>
+      <h2 className="mb-4">📘 Tạo bài tập trắc nghiệm</h2>
+
+      {/* Thông tin bài tập */}
       <Form>
         <Form.Group className="mb-3">
           <Form.Label>Tiêu đề</Form.Label>
           <Form.Control
             type="text"
             value={assignment.title}
-            onChange={(e) => setAssignment({ ...assignment, title: e.target.value })}
+            onChange={(e) =>
+              setAssignment({ ...assignment, title: e.target.value })
+            }
           />
         </Form.Group>
         <Form.Group className="mb-3">
@@ -129,7 +128,9 @@ const CreateMCAssignment = () => {
           <Form.Control
             as="textarea"
             value={assignment.description}
-            onChange={(e) => setAssignment({ ...assignment, description: e.target.value })}
+            onChange={(e) =>
+              setAssignment({ ...assignment, description: e.target.value })
+            }
           />
         </Form.Group>
         <Form.Group className="mb-3">
@@ -137,14 +138,18 @@ const CreateMCAssignment = () => {
           <Form.Control
             type="datetime-local"
             value={assignment.deadline}
-            onChange={(e) => setAssignment({ ...assignment, deadline: e.target.value })}
+            onChange={(e) =>
+              setAssignment({ ...assignment, deadline: e.target.value })
+            }
           />
         </Form.Group>
-        <Form.Group className="mb-3">
+        <Form.Group className="mb-4">
           <Form.Label>Lớp học</Form.Label>
           <Form.Select
             value={assignment.classRoomId}
-            onChange={(e) => setAssignment({ ...assignment, classRoomId: e.target.value })}
+            onChange={(e) =>
+              setAssignment({ ...assignment, classRoomId: e.target.value })
+            }
           >
             <option value="">-- Chọn lớp --</option>
             {classes.map((cls) => (
@@ -154,37 +159,53 @@ const CreateMCAssignment = () => {
             ))}
           </Form.Select>
         </Form.Group>
+      </Form>
 
-        <div className="mb-3">
-          <h4>Câu hỏi</h4>
+      {/* Bảng câu hỏi */}
+      <h4 className="mb-3">Danh sách câu hỏi</h4>
+      <Table bordered hover responsive>
+        <thead>
+          <tr>
+            <th style={{ width: "20%" }}>Câu hỏi</th>
+            <th style={{ width: "60%" }}>Đáp án</th>
+            <th style={{ width: "10%" }}>Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
           {assignment.questions.map((q, qIndex) => (
-            <Card key={qIndex} className="mb-3 p-3">
-              <Form.Group className="mb-2">
-                <Form.Label>Câu {qIndex + 1}</Form.Label>
+            <tr key={qIndex}>
+              <td>
                 <Form.Control
                   type="text"
                   value={q.questionText}
-                  onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
+                  onChange={(e) =>
+                    handleQuestionChange(qIndex, e.target.value)
+                  }
+                  placeholder={`Câu hỏi ${qIndex + 1}`}
                 />
-              </Form.Group>
-              <div className="ms-3">
+              </td>
+              <td>
                 {q.answers.map((a, aIndex) => (
-                  <div key={aIndex} className="d-flex align-items-center mb-2">
+                  <div
+                    key={aIndex}
+                    className="d-flex align-items-center mb-2"
+                  >
                     <Form.Check
                       type="checkbox"
                       checked={a.isCorrect}
                       onChange={() => handleToggleCorrect(qIndex, aIndex)}
                       className="me-2"
-                      label=""
                     />
                     <Form.Control
                       type="text"
                       value={a.answerText}
-                      onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)}
+                      onChange={(e) =>
+                        handleAnswerChange(qIndex, aIndex, e.target.value)
+                      }
                       placeholder={`Đáp án ${aIndex + 1}`}
                     />
                     <Button
-                      variant="danger"
+                      variant="outline-danger"
                       size="sm"
                       className="ms-2"
                       onClick={() => handleRemoveAnswer(qIndex, aIndex)}
@@ -194,31 +215,38 @@ const CreateMCAssignment = () => {
                     </Button>
                   </div>
                 ))}
-              </div>
-              <div className="d-flex gap-2 mt-2">
                 <Button
-                  variant="secondary"
+                  size="sm"
+                  variant="outline-secondary"
                   onClick={() => handleAddAnswer(qIndex)}
                   disabled={q.answers.length >= 10}
                 >
                   + Thêm đáp án
                 </Button>
-                <Button variant="outline-danger" onClick={() => handleRemoveQuestion(qIndex)}>
-                  Xoá câu hỏi
+              </td>
+              <td className="text-center">
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => handleRemoveQuestion(qIndex)}
+                >
+                  Xoá
                 </Button>
-              </div>
-            </Card>
+              </td>
+            </tr>
           ))}
+        </tbody>
+      </Table>
 
-          <Button variant="primary" onClick={handleAddQuestion}>
-            + Thêm câu hỏi
-          </Button>
-        </div>
+      <Button variant="primary" className="mb-3" onClick={handleAddQuestion}>
+        + Thêm câu hỏi
+      </Button>
 
+      <div className="mt-3">
         <Button variant="success" onClick={handleSubmit}>
-          Gửi bài tập
+          ✅ Gửi bài tập
         </Button>
-      </Form>
+      </div>
     </div>
   );
 };

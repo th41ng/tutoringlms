@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button, Modal, Form, Alert, Table } from "react-bootstrap";
+import { Button, Modal, Form, Alert, Table, Badge } from "react-bootstrap";
+import { PencilSquare, Trash, PlusCircle } from "react-bootstrap-icons"; // 🔹 thêm icon
 import { authApis, endpoints } from "../../configs/Apis";
 
 const TeacherAnnouncements = () => {
@@ -48,7 +49,6 @@ const TeacherAnnouncements = () => {
             setError("Vui lòng nhập đầy đủ tiêu đề, nội dung và chọn lớp.");
             return;
         }
-
         try {
             await authApis().post(endpoints.create_announcement, {
                 title,
@@ -78,7 +78,6 @@ const TeacherAnnouncements = () => {
             setError("Vui lòng nhập đầy đủ tiêu đề, nội dung và chọn lớp.");
             return;
         }
-
         try {
             await authApis().put(endpoints.update_announcement(editingId), {
                 title,
@@ -97,7 +96,7 @@ const TeacherAnnouncements = () => {
     const handleDelete = async (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xoá thông báo này?")) {
             try {
-              await authApis().delete(endpoints.delete_announcement(id));
+                await authApis().delete(endpoints.delete_announcement(id));
                 fetchAnnouncements();
             } catch (err) {
                 console.error("Xóa thông báo thất bại", err);
@@ -108,40 +107,52 @@ const TeacherAnnouncements = () => {
 
     return (
         <div className="container mt-4">
-            <h2>📢 Quản lý Thông báo</h2>
-
-            <Button variant="success" className="mb-3" onClick={() => setShowModal(true)}>
-                ➕ Tạo Thông báo
-            </Button>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h2 className="fw-bold">📢 Quản lý Thông báo</h2>
+                <Button variant="success" onClick={() => setShowModal(true)}>
+                    <PlusCircle className="me-2" /> Tạo Thông báo
+                </Button>
+            </div>
 
             {announcements.length === 0 ? (
-                <p>Chưa có thông báo nào.</p>
+                <Alert variant="info">Chưa có thông báo nào.</Alert>
             ) : (
-                <Table striped bordered hover responsive>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Tiêu đề</th>
-                            <th>Nội dung</th>
-                            <th>Lớp</th>
-                            <th>Ngày tạo</th>
-                            <th>Hành động</th>
-                        </tr>
-                    </thead>
+                <Table striped bordered hover responsive className="align-middle text-center">
+                    <thead className="table-light">
+    <tr>
+        <th>#</th>
+        <th>Tiêu đề</th>
+        <th>Nội dung</th>
+        <th>Lớp</th>
+        <th>Ngày tạo</th>
+        <th>Hành động</th>
+    </tr>
+</thead>
                     <tbody>
                         {announcements.map((a, index) => (
                             <tr key={a.id}>
                                 <td>{index + 1}</td>
-                                <td>{a.title}</td>
+                                <td className="fw-semibold">{a.title}</td>
                                 <td>{a.content}</td>
-                                <td>{a.className}</td>
+                                <td>
+                                    <Badge bg="primary">{a.className}</Badge>
+                                </td>
                                 <td>{new Date(a.createdAt).toLocaleString()}</td>
                                 <td>
-                                    <Button variant="warning" size="sm" className="me-2" onClick={() => handleEdit(a)}>
-                                        ✏️
+                                    <Button
+                                        variant="warning"
+                                        size="sm"
+                                        className="me-2"
+                                        onClick={() => handleEdit(a)}
+                                    >
+                                        <PencilSquare className="me-1" /> Sửa
                                     </Button>
-                                    <Button variant="danger" size="sm" onClick={() => handleDelete(a.id)}>
-                                        🗑️
+                                    <Button
+                                        variant="danger"
+                                        size="sm"
+                                        onClick={() => handleDelete(a.id)}
+                                    >
+                                        <Trash className="me-1" /> Xoá
                                     </Button>
                                 </td>
                             </tr>
@@ -150,6 +161,7 @@ const TeacherAnnouncements = () => {
                 </Table>
             )}
 
+            {/* Modal tạo/cập nhật */}
             <Modal show={showModal} onHide={() => { setShowModal(false); resetForm(); }}>
                 <Modal.Header closeButton>
                     <Modal.Title>{editingId ? "Cập nhật Thông báo" : "Tạo Thông báo"}</Modal.Title>
@@ -197,8 +209,11 @@ const TeacherAnnouncements = () => {
                     <Button variant="secondary" onClick={() => { setShowModal(false); resetForm(); }}>
                         Đóng
                     </Button>
-                    <Button variant={editingId ? "primary" : "success"} onClick={editingId ? handleUpdate : handleCreate}>
-                        {editingId ? "💾 Cập nhật" : "➕ Tạo"}
+                    <Button
+                        variant={editingId ? "primary" : "success"}
+                        onClick={editingId ? handleUpdate : handleCreate}
+                    >
+                        {editingId ? "Lưu thay đổi" : "Tạo mới"}
                     </Button>
                 </Modal.Footer>
             </Modal>

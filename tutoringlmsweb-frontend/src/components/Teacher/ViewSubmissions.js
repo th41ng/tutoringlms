@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { authApis } from "../../configs/Apis";
+import { Table, Button, Modal, Form, Alert, Spinner } from "react-bootstrap";
 
 export default function ViewSubmissions() {
   const { assignmentId } = useParams();
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type"); // ESSAY hoặc MULTIPLE_CHOICE
+
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -29,7 +31,6 @@ export default function ViewSubmissions() {
         setLoading(false);
       }
     }
-
     fetchSubmissions();
   }, [assignmentId, type]);
 
@@ -47,12 +48,10 @@ export default function ViewSubmissions() {
 
   const submitGrade = async () => {
     try {
-      // Gọi API để lưu điểm, ví dụ endpoint POST /api/assignments/{assignmentId}/submissions/{studentId}/grade
       await authApis().post(`/assignments/${assignmentId}/submissions/${currentSubmission.studentId}/grade`, {
         grade: gradeInput
       });
 
-      // Cập nhật state local để không phải reload
       setSubmissions(submissions.map(sub =>
         sub.studentId === currentSubmission.studentId ? { ...sub, grade: gradeInput } : sub
       ));
@@ -63,21 +62,21 @@ export default function ViewSubmissions() {
     }
   };
 
-  if (loading) return <p>Đang tải...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <div className="text-center mt-5"><Spinner animation="border" /></div>;
+  if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
-    <div>
-      <h2>Danh sách nộp bài ({type})</h2>
-      <table border="1" cellPadding="8" style={{ width: "100%", borderCollapse: "collapse" }}>
+    <div className="container mt-4">
+      <h2 className="mb-3">Danh sách nộp bài ({type})</h2>
+
+      <Table striped bordered hover responsive>
         <thead>
           <tr>
             <th>STT</th>
             <th>Học sinh</th>
             <th>Ngày nộp</th>
             <th>Trễ hạn</th>
-            {type === "MULTIPLE_CHOICE" && <th>Điểm</th>}
-            {type === "ESSAY" && <th>Điểm</th>}
+            <th>Điểm</th>
             {type === "ESSAY" && <th>Bài làm</th>}
             {type === "ESSAY" && <th>Chấm điểm</th>}
           </tr>
@@ -92,6 +91,7 @@ export default function ViewSubmissions() {
                 <td>{submittedAt}</td>
                 <td>{sub.isLate ? "Có" : "Không"}</td>
                 <td>{sub.score ?? sub.grade ?? "Chưa chấm"}</td>
+
                 {type === "ESSAY" && (
                   <td>
                     {sub.fileUrl ? (
@@ -101,48 +101,52 @@ export default function ViewSubmissions() {
                     )}
                   </td>
                 )}
+
                 {type === "ESSAY" && (
                   <td>
-                    <button onClick={() => openGradeModal(sub)}>Chấm điểm</button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => openGradeModal(sub)}
+                    >
+                      Chấm điểm
+                    </Button>
                   </td>
                 )}
               </tr>
             );
           })}
         </tbody>
-      </table>
+      </Table>
 
       {/* Modal chấm điểm */}
-      {modalOpen && currentSubmission && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: "rgba(0,0,0,0.5)", display: "flex", justifyContent: "center", alignItems: "center"
-        }}>
-          <div style={{ backgroundColor: "white", padding: 20, width: 400, borderRadius: 8 }}>
-            <h3>Chấm điểm: {currentSubmission.studentName}</h3>
-            <p><strong>Bài làm:</strong></p>
-            {currentSubmission.fileUrl ? (
-              <a href={currentSubmission.fileUrl} target="_blank" rel="noopener noreferrer">Tải file</a>
-            ) : (
-              <p>{currentSubmission.content || "Không có nội dung"}</p>
-            )}
-            <p>
-              <label>Điểm: </label>
-              <input
-                type="number"
-                value={gradeInput}
-                onChange={(e) => setGradeInput(e.target.value)}
-                min="0"
-                max="10"
-              />
-            </p>
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-              <button onClick={submitGrade}>Lưu</button>
-              <button onClick={closeModal}>Hủy</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal show={modalOpen} onHide={closeModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Chấm điểm: {currentSubmission?.studentName}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p><strong>Bài làm:</strong></p>
+          {currentSubmission?.fileUrl ? (
+            <a href={currentSubmission.fileUrl} target="_blank" rel="noopener noreferrer">Tải file</a>
+          ) : (
+            <p>{currentSubmission?.content || "Không có nội dung"}</p>
+          )}
+          <Form.Group className="mt-3">
+            <Form.Label>Điểm</Form.Label>
+            <Form.Control
+              type="number"
+              value={gradeInput}
+              onChange={(e) => setGradeInput(e.target.value)}
+              min="0"
+              max="10"
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeModal}>Hủy</Button>
+          <Button variant="success" onClick={submitGrade}>Lưu</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

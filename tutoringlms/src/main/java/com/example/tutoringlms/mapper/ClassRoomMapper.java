@@ -46,6 +46,7 @@ public class ClassRoomMapper {
 
     private static ClassRoomDTO.SessionDTO toSessionDTO(ClassSession session) {
         ClassRoomDTO.SessionDTO sdto = new ClassRoomDTO.SessionDTO();
+        sdto.setId(session.getId());        // thêm dòng này
         sdto.setDate(session.getDate());
         sdto.setDayOfWeek(session.getDayOfWeek());
         sdto.setStartTime(session.getStartTime());

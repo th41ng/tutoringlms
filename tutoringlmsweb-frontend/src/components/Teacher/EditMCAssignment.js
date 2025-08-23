@@ -1,3 +1,4 @@
+// components/assignments/EditMCAssignment.js
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { authApis, endpoints } from "../../configs/Apis";
@@ -12,12 +13,14 @@ const EditMCAssignment = () => {
     const loadAssignment = async () => {
       try {
         const res = await authApis().get(endpoints.detail_MCassignment(id));
+
+        // Nếu chưa có câu hỏi thì khởi tạo 1 mẫu
         if (!res.data.questions || res.data.questions.length === 0) {
           res.data.questions = [
             {
               questionText: "",
-              answers: [{ answerText: "", isCorrect: true }]
-            }
+              answers: [{ answerText: "", isCorrect: true }],
+            },
           ];
         }
         setAssignment(res.data);
@@ -30,15 +33,20 @@ const EditMCAssignment = () => {
 
   const handleSave = async () => {
     try {
+      if (!assignment.title || !assignment.deadline) {
+        alert("Vui lòng nhập tiêu đề và hạn nộp!");
+        return;
+      }
+
       for (let q of assignment.questions) {
-        const corrects = q.answers.filter(a => a.isCorrect);
+        const corrects = q.answers.filter((a) => a.isCorrect);
         if (corrects.length === 0) {
           alert("Mỗi câu hỏi cần ít nhất 1 đáp án đúng.");
           return;
         }
       }
 
-      // ✅ Đúng endpoint cho bài trắc nghiệm
+      // PUT dữ liệu (giữ nguyên logic cũ)
       await authApis().put(endpoints.update_MCassignment(id), assignment);
 
       alert("Đã lưu thành công!");
@@ -49,45 +57,45 @@ const EditMCAssignment = () => {
   };
 
   const updateQuestionText = (index, text) => {
-    const updated = [...assignment.questions];
-    updated[index].questionText = text;
-    setAssignment({ ...assignment, questions: updated });
+    const updated = { ...assignment };
+    updated.questions[index].questionText = text;
+    setAssignment(updated);
   };
 
   const updateAnswer = (qIndex, aIndex, field, value) => {
-    const updated = [...assignment.questions];
-    updated[qIndex].answers[aIndex][field] = value;
-    setAssignment({ ...assignment, questions: updated });
+    const updated = { ...assignment };
+    updated.questions[qIndex].answers[aIndex][field] = value;
+    setAssignment(updated);
   };
 
   const addAnswer = (qIndex) => {
-    const updated = [...assignment.questions];
-    if (updated[qIndex].answers.length >= 10) return;
-    updated[qIndex].answers.push({ answerText: "", isCorrect: false });
-    setAssignment({ ...assignment, questions: updated });
+    const updated = { ...assignment };
+    if (updated.questions[qIndex].answers.length >= 10) return;
+    updated.questions[qIndex].answers.push({ answerText: "", isCorrect: false });
+    setAssignment(updated);
   };
 
   const removeAnswer = (qIndex, aIndex) => {
-    const updated = [...assignment.questions];
-    if (updated[qIndex].answers.length <= 1) return;
-    updated[qIndex].answers.splice(aIndex, 1);
-    setAssignment({ ...assignment, questions: updated });
+    const updated = { ...assignment };
+    if (updated.questions[qIndex].answers.length <= 1) return;
+    updated.questions[qIndex].answers.splice(aIndex, 1);
+    setAssignment(updated);
   };
 
   const addQuestion = () => {
-    const updated = [...assignment.questions];
-    updated.push({
+    const updated = { ...assignment };
+    updated.questions.push({
       questionText: "",
       answers: [{ answerText: "", isCorrect: true }],
     });
-    setAssignment({ ...assignment, questions: updated });
+    setAssignment(updated);
   };
 
   const removeQuestion = (index) => {
-    const updated = [...assignment.questions];
-    if (updated.length <= 1) return;
-    updated.splice(index, 1);
-    setAssignment({ ...assignment, questions: updated });
+    const updated = { ...assignment };
+    if (updated.questions.length <= 1) return;
+    updated.questions.splice(index, 1);
+    setAssignment(updated);
   };
 
   if (!assignment) return <p>Đang tải...</p>;
@@ -108,7 +116,7 @@ const EditMCAssignment = () => {
           <Form.Label>Hạn nộp</Form.Label>
           <Form.Control
             type="datetime-local"
-            value={assignment.deadline?.slice(0, 16)}
+            value={assignment.deadline ? assignment.deadline.slice(0, 16) : ""}
             onChange={(e) => setAssignment({ ...assignment, deadline: e.target.value })}
           />
         </Form.Group>
@@ -147,9 +155,7 @@ const EditMCAssignment = () => {
                   <Form.Control
                     value={a.answerText}
                     placeholder={`Đáp án ${aIndex + 1}`}
-                    onChange={(e) =>
-                      updateAnswer(qIndex, aIndex, "answerText", e.target.value)
-                    }
+                    onChange={(e) => updateAnswer(qIndex, aIndex, "answerText", e.target.value)}
                   />
                 </Col>
                 <Col md={3}>
@@ -157,9 +163,7 @@ const EditMCAssignment = () => {
                     type="checkbox"
                     label="Đúng"
                     checked={a.isCorrect}
-                    onChange={(e) =>
-                      updateAnswer(qIndex, aIndex, "isCorrect", e.target.checked)
-                    }
+                    onChange={(e) => updateAnswer(qIndex, aIndex, "isCorrect", e.target.checked)}
                   />
                 </Col>
                 <Col md={2}>

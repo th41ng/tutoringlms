@@ -2,6 +2,7 @@ package com.example.tutoringlms.controller;
 
 import com.cloudinary.utils.ObjectUtils;
 import com.example.tutoringlms.dto.PaymentDTO;
+import com.example.tutoringlms.dto.StudentPaymentDTO;
 import com.example.tutoringlms.mapper.PaymentMapper;
 import com.example.tutoringlms.model.ClassRoom;
 import com.example.tutoringlms.model.ClassRoomPaymentInfo;
@@ -40,7 +41,8 @@ public class PaymentController {
     public ResponseEntity<Payment> uploadProof(
             @PathVariable Long classId,
             @AuthenticationPrincipal UserDetails userDetails,
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("amount") Float amount
     ) throws IOException {
 
         Student student = studentRepository.findByUsername(userDetails.getUsername())
@@ -49,7 +51,7 @@ public class PaymentController {
         ClassRoom classRoom = classRoomRepository.findById(classId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lớp học"));
 
-        Payment payment = paymentService.createOrUpdatePayment(student, classRoom, file);
+        Payment payment = paymentService.createOrUpdatePayment(student, classRoom, file, amount);
         return ResponseEntity.ok(payment);
     }
 
@@ -58,11 +60,11 @@ public class PaymentController {
         Payment confirmedPayment = paymentService.confirmPayment(paymentId);
         return ResponseEntity.ok(confirmedPayment);
     }
-    // 3. Danh sách thanh toán của lớp
-    @GetMapping("/class/{classId}")
-    public ResponseEntity<List<Payment>> getPaymentsByClass(@PathVariable Long classId) {
-        return ResponseEntity.ok(paymentRepo.findByClassRoomId(classId));
-    }
+//    // 3. Danh sách thanh toán của lớp
+//    @GetMapping("/class/{classId}")
+//    public ResponseEntity<List<Payment>> getPaymentsByClass(@PathVariable Long classId) {
+//        return ResponseEntity.ok(paymentRepo.findByClassRoomId(classId));
+//    }
 
     // 4. Danh sách thanh toán của học sinh
     @GetMapping("/student/{studentId}")
@@ -86,5 +88,25 @@ public class PaymentController {
         ).orElse(null);
 
         return ResponseEntity.ok(PaymentMapper.toDTO(payment));
+    }
+
+    @GetMapping("/class/{classId}")
+    public List<Payment> getByClass(
+            @PathVariable Long classId,
+            @RequestParam int year
+    ) {
+        return paymentService.getPaymentsByClass(classId, year);
+    }
+
+    @PostMapping("/{id}/toggle")
+    public Payment toggle(@PathVariable Long id) {
+        return paymentService.togglePaid(id);
+    }
+    @GetMapping("/class/{classId}/table")
+    public ResponseEntity<List<StudentPaymentDTO>> getClassPaymentTable(
+            @PathVariable Long classId,
+            @RequestParam int year
+    ) {
+        return ResponseEntity.ok(paymentService.getClassPaymentTable(classId, year));
     }
 }

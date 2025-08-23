@@ -35,6 +35,9 @@ import ViewSubmissions from './components/Teacher/ViewSubmissions';
 import FaceAttendance from './components/FaceAttendance';
 import StudentPaymentsPage from './components/Student/StudentPaymentsPage';
 import TeacherPaymentInfo from './components/Teacher/TeacherPaymentInfo';
+import ClassroomPaymentDetail from './components/Teacher/ClassroomPaymentDetail';
+import ClassroomPaymentsPage from './components/Teacher/ClassroomPaymentsPage';
+import FaceEnroll from './components/FaceEnroll';
 
 const AppRoutes = () => {
   const location = useLocation();
@@ -119,6 +122,19 @@ const AppRoutes = () => {
               </ProtectedRoute>
             } />
 
+            <Route path="/classroom-payment" element={
+              <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
+                <ClassroomPaymentsPage />
+              </ProtectedRoute>
+            } />
+
+
+            <Route path="/classroom-payment-detail/:id" element={
+              <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
+                <ClassroomPaymentDetail />
+              </ProtectedRoute>
+            } />
+
             <Route path="/forum/posts/my-class" element={
               <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
                 <Forum />
@@ -157,9 +173,10 @@ const AppRoutes = () => {
               </ProtectedRoute>
             } />
             <Route path="/attendance" element={
-
               <FaceAttendance />
-
+            } />
+             <Route path="/attendance/register-face" element={  
+                <FaceEnroll />
             } />
           </Routes>
         </Container>

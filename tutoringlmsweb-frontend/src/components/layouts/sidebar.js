@@ -30,6 +30,7 @@ const Sidebar = () => {
       { to: "/student/assignments", label: "Bài tập" },
       { to: "/forum/mine", label: "Diễn đàn" }, 
       { to: "/student/payments", label: "Thanh toán" },
+      { to: "/attendance/register-face", label: "Đăng kí khuôn mặt" },
     ];
   }
 

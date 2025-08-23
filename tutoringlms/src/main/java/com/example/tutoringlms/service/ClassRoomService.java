@@ -1,16 +1,11 @@
 package com.example.tutoringlms.service;
 
+import com.example.tutoringlms.dto.AttendanceDTO;
 import com.example.tutoringlms.dto.ClassRoomDTO;
 import com.example.tutoringlms.dto.TeacherDTO;
 import com.example.tutoringlms.mapper.ClassRoomMapper;
-import com.example.tutoringlms.model.ClassRoom;
-import com.example.tutoringlms.model.ClassSession;
-import com.example.tutoringlms.model.Forum;
-import com.example.tutoringlms.model.Teacher;
-import com.example.tutoringlms.repository.ClassRoomRepository;
-import com.example.tutoringlms.repository.ClassSessionRepository;
-import com.example.tutoringlms.repository.ForumRepository;
-import com.example.tutoringlms.repository.TeacherRepository;
+import com.example.tutoringlms.model.*;
+import com.example.tutoringlms.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -25,6 +20,8 @@ public class ClassRoomService {
     private final ClassRoomRepository classRoomRepository;
     private final ForumRepository forumRepo;
     private  final ClassSessionRepository classSessionRepository;
+    private final AttendanceRecordRepository attendanceRecordRepository;
+    private final StudentRepository studentRepository;
 
 //    public ClassRoom createClass(ClassRoom classRoom) {
 //        String joinCode = generateUniqueJoinCode(6);
@@ -129,4 +126,35 @@ public ClassRoom createClass(ClassRoomDTO dto, Teacher teacher, LocalDate startD
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lớp học với ID = " + id));
     }
 
+
+
+
+    public List<AttendanceDTO> findBySessionId(Long sessionId) {
+        return attendanceRecordRepository.findBySession_Id(sessionId).stream().map(a -> {
+            AttendanceDTO dto = new AttendanceDTO();
+            dto.setId(a.getId());
+            dto.setStudentId(a.getStudent().getId());
+            dto.setStudentName(a.getStudent().getLastName() + " " + a.getStudent().getFirstName());
+            dto.setPresent(a.getIsAttendance());
+            dto.setCapturedFaceImage(a.getCapturedFaceImage());
+            return dto;
+        }).toList();
+    }
+
+
+    public void removeStudentFromClass(Long classId, Long studentId) {
+        ClassRoom classRoom = classRoomRepository.findById(classId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lớp học"));
+
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy học sinh"));
+
+        if (!classRoom.getStudents().contains(student)) {
+            throw new IllegalArgumentException("Học sinh không thuộc lớp này");
+        }
+
+        // Gỡ liên kết
+        student.setClassRoom(null);
+        studentRepository.save(student);
+    }
 }

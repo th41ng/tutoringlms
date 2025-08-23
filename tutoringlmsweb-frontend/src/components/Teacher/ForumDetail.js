@@ -66,29 +66,36 @@ const ForumDetail = () => {
   };
 
   return (
-    <div>
-      <h2>💬 Diễn đàn (ID: {id})</h2>
+    <div className="container mt-4">
+      <h2 className="mb-4">📌 Diễn đàn (ID: {id})</h2>
 
       {/* Form tạo bài viết */}
-      <form onSubmit={handleCreatePost} className="mb-4">
-        <h4>📝 Tạo bài viết mới</h4>
-        <input
-          type="text"
-          placeholder="Tiêu đề"
-          value={newPost.title}
-          onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-          required
-          className="form-control mb-2"
-        />
-        <textarea
-          placeholder="Nội dung"
-          value={newPost.content}
-          onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
-          required
-          className="form-control mb-2"
-        />
-        <button className="btn btn-primary" type="submit">Đăng bài</button>
-      </form>
+      <div className="card shadow-sm mb-4">
+        <div className="card-body">
+          <h4 className="card-title mb-3">✍️ Tạo bài viết mới</h4>
+          <form onSubmit={handleCreatePost}>
+            <input
+              type="text"
+              placeholder="Tiêu đề"
+              value={newPost.title}
+              onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+              required
+              className="form-control mb-2"
+            />
+            <textarea
+              placeholder="Nội dung"
+              value={newPost.content}
+              onChange={(e) => setNewPost({ ...newPost, content: e.target.value })}
+              required
+              className="form-control mb-2"
+              rows={3}
+            />
+            <button className="btn btn-primary" type="submit">
+              Đăng bài
+            </button>
+          </form>
+        </div>
+      </div>
 
       {/* Danh sách bài viết */}
       {loading ? (
@@ -96,51 +103,55 @@ const ForumDetail = () => {
       ) : (
         <>
           {posts.length === 0 ? (
-            <p>Chưa có bài viết nào.</p>
+            <p className="text-muted">Chưa có bài viết nào.</p>
           ) : (
-            posts.map(post => (
-              <div key={post.id} className="mb-4 border rounded p-3 shadow-sm">
-                <h5>{post.title}</h5>
-                <p>{post.content}</p>
-                <small className="text-muted">
-                  🧑 Đăng bởi: {post.author?.lastName} {post.author?.firstName || "Ẩn danh"} | 🕒{" "}
-                  {new Date(post.createdAt).toLocaleString()}
-                </small>
+            posts.map((post) => (
+              <div key={post.id} className="card mb-4 shadow-sm">
+                <div className="card-body">
+                  <h5 className="card-title">{post.title}</h5>
+                  <p className="card-text">{post.content}</p>
+                  <small className="text-muted d-block mb-2">
+                    Đăng bởi: <strong>{post.author?.lastName} {post.author?.firstName || "Ẩn danh"}</strong> |{" "}
+                    {new Date(post.createdAt).toLocaleString()}
+                  </small>
 
-                <div className="mt-3">
-                  <h6>💭 Bình luận:</h6>
-                  {comments[post.id]?.length > 0 ? (
-                    <ul>
-                      {comments[post.id].map((cmt, idx) => (
-                        <li key={idx}>
-                          <strong>{cmt.author?.lastName}  {cmt.author?.firstName }:</strong> {cmt.content}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>Chưa có bình luận.</p>
-                  )}
+                  {/* Bình luận */}
+                  <div className="mt-3">
+                    <h6 className="mb-2">💬 Bình luận:</h6>
+                    {comments[post.id]?.length > 0 ? (
+                      <ul className="list-group mb-2">
+                        {comments[post.id].map((cmt, idx) => (
+                          <li key={idx} className="list-group-item">
+                            <strong>{cmt.author?.lastName} {cmt.author?.firstName}:</strong> {cmt.content}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-muted">Chưa có bình luận.</p>
+                    )}
 
-                  {/* Form tạo bình luận */}
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      const form = e.target;
-                      const content = form.comment.value.trim();
-                      if (content) {
-                        handleCreateComment(e, post.id, content);
-                        form.reset();
-                      }
-                    }}
-                  >
-                    <input
-                      name="comment"
-                      className="form-control mt-2"
-                      placeholder="Viết bình luận..."
-                      required
-                    />
-                    <button className="btn btn-secondary mt-1">Gửi</button>
-                  </form>
+                    {/* Form tạo bình luận */}
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        const form = e.target;
+                        const content = form.comment.value.trim();
+                        if (content) {
+                          handleCreateComment(e, post.id, content);
+                          form.reset();
+                        }
+                      }}
+                      className="d-flex gap-2"
+                    >
+                      <input
+                        name="comment"
+                        className="form-control"
+                        placeholder="Viết bình luận..."
+                        required
+                      />
+                      <button className="btn btn-secondary">Gửi</button>
+                    </form>
+                  </div>
                 </div>
               </div>
             ))

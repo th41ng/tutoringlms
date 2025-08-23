@@ -1,5 +1,6 @@
     package com.example.tutoringlms.controller;
 
+    import com.example.tutoringlms.dto.AttendanceDTO;
     import com.example.tutoringlms.dto.ClassRoomDTO;
     import com.example.tutoringlms.model.ClassRoom;
     import com.example.tutoringlms.model.Teacher;
@@ -62,4 +63,23 @@
             return ResponseEntity.ok(students);
         }
 
+
+
+
+
+        @GetMapping("/attendance/{sessionId}")
+        public ResponseEntity<List<AttendanceDTO>> getAttendance(@PathVariable Long sessionId) {
+            List<AttendanceDTO> list = classRoomService.findBySessionId(sessionId); // <--- sửa method
+            return ResponseEntity.ok(list);
+        }
+        @DeleteMapping("/classroom/{classId}/students/{studentId}")
+        public ResponseEntity<?> removeStudent(@PathVariable Long classId, @PathVariable Long studentId) {
+            classRoomService.removeStudentFromClass(classId, studentId);
+            return ResponseEntity.ok("Đã xóa học sinh khỏi lớp");
+        }
+
+        @GetMapping("/stats")
+        public ResponseEntity<?> getTeacherStats(@AuthenticationPrincipal UserDetails userDetails) {
+            return ResponseEntity.ok(teacherService.getTeacherStats(userDetails.getUsername()));
+        }
     }

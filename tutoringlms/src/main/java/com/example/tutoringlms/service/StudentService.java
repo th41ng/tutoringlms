@@ -11,6 +11,7 @@ import com.example.tutoringlms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -70,9 +71,19 @@ public class StudentService {
         ClassRoomDTO dto = new ClassRoomDTO();
         dto.setId(classRoom.getId());
         dto.setClassName(classRoom.getClassName());
-        dto.setSchedule(classRoom.getSchedule());
         dto.setJoinCode(classRoom.getJoinCode());
         dto.setTeacher(teacherDTO);
+
+// thêm sessions chi tiết
+        List<ClassRoomDTO.SessionDTO> sessionDTOs = classRoom.getSessions().stream().map(s -> {
+            ClassRoomDTO.SessionDTO sd = new ClassRoomDTO.SessionDTO();
+            sd.setId(s.getId());
+            sd.setDate(s.getDate());         // yyyy-MM-dd
+            sd.setStartTime(s.getStartTime());
+            sd.setEndTime(s.getEndTime());
+            return sd;
+        }).toList();
+        dto.setSessions(sessionDTOs);
 
         return dto;
     }

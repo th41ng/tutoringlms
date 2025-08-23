@@ -7,6 +7,7 @@ import com.example.tutoringlms.model.ClassRoom;
 import com.example.tutoringlms.model.ClassRoomPaymentInfo;
 import com.example.tutoringlms.repository.ClassRoomPaymentInfoRepository;
 import com.example.tutoringlms.repository.ClassRoomRepository;
+import com.example.tutoringlms.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +20,12 @@ import java.util.Map;
 @RequestMapping("/api/class-payments")
 @RequiredArgsConstructor
 public class ClassPaymentController {
-
+    private final PaymentService paymentService;
     private final ClassRoomPaymentInfoRepository paymentInfoRepo;
     private final Cloudinary cloudinary;
     private final ClassRoomRepository classRoomRepo;
     @PostMapping("/create")
-    public ResponseEntity<ClassRoomPaymentInfo> createPaymentInfo(
+    public ResponseEntity<ClassRoomPaymentInfo> createOrUpdatePaymentInfo(
             @RequestParam Long classId,
             @RequestParam Float amount,
             @RequestParam String bankAccount,
@@ -34,8 +35,13 @@ public class ClassPaymentController {
         ClassRoom classRoom = classRoomRepo.findById(classId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy lớp học"));
 
-        ClassRoomPaymentInfo info = new ClassRoomPaymentInfo();
-        info.setClassRoom(classRoom);
+        // Kiểm tra xem info đã tồn tại chưa
+        ClassRoomPaymentInfo info = paymentInfoRepo.findByClassRoomId(classId);
+        if (info == null) {
+            info = new ClassRoomPaymentInfo();
+            info.setClassRoom(classRoom);
+        }
+
         info.setAmount(amount);
         info.setBankAccount(bankAccount);
         info.setAccountName(accountName);
@@ -63,14 +69,24 @@ public class ClassPaymentController {
 
         return ResponseEntity.ok(dto);
     }
+
+    @GetMapping("/current")
+    public ResponseEntity<ClassRoomPaymentInfoDTO> getTeacherPaymentInfo() {
+        ClassRoomPaymentInfoDTO dto = paymentService.getCurrentInfo();
+
+        if (dto == null) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(dto);
+    }
+
     @PostMapping("/create-all")
-    public ResponseEntity<String> createPaymentInfoForAllClasses(
+    public ResponseEntity<String> createOrUpdatePaymentInfoForAllClasses(
             @RequestParam Float amount,
             @RequestParam String bankAccount,
             @RequestParam String accountName,
             @RequestParam(required = false) MultipartFile qrFile) throws IOException {
 
-        // Lấy tất cả lớp (hoặc lọc theo giáo viên nếu cần)
         Iterable<ClassRoom> allClasses = classRoomRepo.findAll();
 
         String qrUrl = null;
@@ -81,8 +97,12 @@ public class ClassPaymentController {
         }
 
         for (ClassRoom classRoom : allClasses) {
-            ClassRoomPaymentInfo info = new ClassRoomPaymentInfo();
-            info.setClassRoom(classRoom);
+            ClassRoomPaymentInfo info = paymentInfoRepo.findByClassRoomId(classRoom.getId());
+            if (info == null) {
+                info = new ClassRoomPaymentInfo();
+                info.setClassRoom(classRoom);
+            }
+
             info.setAmount(amount);
             info.setBankAccount(bankAccount);
             info.setAccountName(accountName);
