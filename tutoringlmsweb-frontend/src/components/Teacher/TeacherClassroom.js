@@ -24,7 +24,7 @@ const TeacherClassroom = () => {
 
   const fetchClasses = async () => {
     try {
-      const res = await authApis().get(endpoints.list_classes);
+      const res = await authApis().get(endpoints.listClasses);
       setClasses(res.data);
     } catch (err) {
       console.error("Lỗi khi tải danh sách lớp:", err);
@@ -83,9 +83,9 @@ const TeacherClassroom = () => {
     e.preventDefault();
     try {
       if (editingClass) {
-        await authApis().put(endpoints.edit_class(editingClass.id), formData);
+        await authApis().put(endpoints.editClass(editingClass.id), formData);
       } else {
-        await authApis().post(endpoints.create_class, formData);
+        await authApis().post(endpoints.createClass, formData);
       }
       handleCloseModal();
       fetchClasses();
@@ -97,7 +97,7 @@ const TeacherClassroom = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa lớp học này không?")) {
       try {
-        await authApis().delete(endpoints.delete_class(id));
+        await authApis().delete(endpoints.deleteClass(id));
         fetchClasses();
       } catch (err) {
         console.error("Lỗi khi xóa lớp:", err);
@@ -133,7 +133,7 @@ const TeacherClassroom = () => {
                     <td className="text-center"><Badge bg="secondary">{cls.id}</Badge></td>
                     <td><strong>{cls.className}</strong></td>
                     <td className="text-center">
-                      <Button size="sm" variant="info" onClick={() => navigate(endpoints.class_detail(cls.id))} className="me-2">
+                      <Button size="sm" variant="info" onClick={() => navigate(endpoints.classDetail(cls.id))} className="me-2">
                         <InfoCircle className="me-1" /> Chi tiết
                       </Button>
                       <Button size="sm" variant="warning" onClick={() => handleOpenModal(cls)} className="me-2">

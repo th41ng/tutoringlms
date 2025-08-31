@@ -1,4 +1,3 @@
-// PaymentMapper.java
 package com.example.tutoringlms.mapper;
 
 import com.example.tutoringlms.dto.PaymentDTO;
@@ -19,7 +18,7 @@ public class PaymentMapper {
 
         return new PaymentDTO(
                 payment.getId(),
-                payment.getStatus(),
+                payment.getStatus() != null ? payment.getStatus().name() : null, // Sử dụng enum name()
                 payment.getProofUrl(),
                 payment.getPaidMonth(),
                 payment.getPaidYear(),

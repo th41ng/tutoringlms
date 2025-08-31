@@ -11,7 +11,7 @@ const ClassroomPaymentsPage = () => {
 
   const fetchClasses = async () => {
     try {
-      const res = await authApis().get(endpoints.list_classes);
+      const res = await authApis().get(endpoints.listClasses);
       setClasses(res.data);
     } catch (err) {
       console.error("Lỗi khi tải danh sách lớp:", err);

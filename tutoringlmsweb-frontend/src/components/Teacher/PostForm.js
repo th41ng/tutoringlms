@@ -8,7 +8,7 @@ const PostForm = ({ forumId, reload }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await authApis().post(endpoints["create-post"], {
+              await authApis().post(endpoints.createPost, {  
                 forumId,
                 title,
                 content

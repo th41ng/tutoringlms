@@ -10,6 +10,7 @@ import com.example.tutoringlms.repository.ClassRoomRepository;
 import com.example.tutoringlms.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -79,7 +80,7 @@ public class ClassPaymentController {
         }
         return ResponseEntity.ok(dto);
     }
-
+    @Transactional
     @PostMapping("/create-all")
     public ResponseEntity<String> createOrUpdatePaymentInfoForAllClasses(
             @RequestParam Float amount,

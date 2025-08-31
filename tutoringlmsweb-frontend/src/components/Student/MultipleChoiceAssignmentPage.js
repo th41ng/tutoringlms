@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { authApis } from "../../configs/Apis";
+import { authApis , endpoints } from "../../configs/Apis";
 import { Card, Button, Form, Alert } from "react-bootstrap";
 
 export default function DoMCPage() {
@@ -20,11 +20,11 @@ export default function DoMCPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const mcRes = await authApis().get(`/submission/doMC/${assignmentId}`);
+        const mcRes = await authApis().get(endpoints.detailMCAssignment(assignmentId));
         setQuestions(mcRes.data.questions || []);
         setDeadline(mcRes.data.deadline || null);
 
-        const myRes = await authApis().get(`/submission/mymc/${assignmentId}`);
+        const myRes = await authApis().get(endpoints.myMCSubmission(assignmentId));
         if (myRes.data) {
           setAlreadySubmitted(true);
           setScore(myRes.data.score ?? null);
@@ -51,8 +51,8 @@ export default function DoMCPage() {
     setSuccess("");
 
     try {
-      await authApis().post(
-        `/submission/multiple-choice?assignmentId=${assignmentId}`,
+       await authApis().post(
+        endpoints.submitMC(assignmentId),
         answers,
         { headers: { "Content-Type": "application/json" }, withCredentials: true }
       );

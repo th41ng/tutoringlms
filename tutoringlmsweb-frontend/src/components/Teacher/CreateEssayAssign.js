@@ -19,7 +19,7 @@ const CreateEssayAssign = () => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const res = await authApis().get(endpoints.list_classes);
+        const res = await authApis().get(endpoints.listClasses);
         const data = res.data;
 
         if (Array.isArray(data)) {
@@ -64,7 +64,7 @@ const CreateEssayAssign = () => {
         formData.append("file", file);
       }
 
-      await authApis().post(endpoints.create_ESassignment, formData);
+      await authApis().post(endpoints.createEssayAssignment, formData);
 
       setSuccess(true);
       setError('');
@@ -83,7 +83,7 @@ const CreateEssayAssign = () => {
             <Card.Body>
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h3 className="mb-0">📝 Tạo bài tập tự luận</h3>
-                <Button variant="outline-secondary" size="sm" onClick={() => navigate('/teacher-assignments')}>
+                <Button variant="outline-secondary" size="sm" onClick={() => navigate('/assignments/all')}>
                   Quay lại
                 </Button>
               </div>
@@ -165,7 +165,7 @@ const CreateEssayAssign = () => {
                 </Form.Group>
 
                 <div className="d-flex justify-content-end gap-2">
-                  <Button variant="secondary" onClick={() => navigate('/teacher-assignments')}>
+                  <Button variant="secondary" onClick={() => navigate('/assignments/all')}>
                     Hủy
                   </Button>
                   <Button variant="primary" type="submit">

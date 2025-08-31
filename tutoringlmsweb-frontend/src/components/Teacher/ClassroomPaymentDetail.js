@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, Table, Button, Spinner, Form, Alert, Badge } from "react-bootstrap";
-import { authApis } from "../../configs/Apis";
+import { authApis,endpoints } from "../../configs/Apis";
 
-// Format tiền tệ rất nhẹ nhàng
 const fmtCurrency = (v) => {
   if (v === null || v === undefined) return "-";
   try {
@@ -14,23 +13,19 @@ const fmtCurrency = (v) => {
 };
 
 const ClassroomPaymentDetail = () => {
-  const { id } = useParams(); // classId từ router
+  const { id } = useParams(); 
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Dữ liệu từ API /api/payments/class/{id}/table?year=...
-  // Mỗi item: { studentId, studentName, [email?], [phone?], payments: PaymentDTO[] }
   const [rows, setRows] = useState([]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      const res = await authApis().get(`/payments/class/${id}/table`, {
-        params: { year },
-      });
+    const res = await authApis().get(endpoints.paymentsTable(id), { params: { year } });
       console.log("👉 /table response:", res.data);
       setRows(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
@@ -45,7 +40,6 @@ const ClassroomPaymentDetail = () => {
     loadData();
   }, [loadData]);
 
-  // Build map: studentId -> { [paidMonth]: PaymentDTO }
   const paymentMap = useMemo(() => {
     const map = {};
     rows.forEach((r) => {
@@ -61,11 +55,10 @@ const ClassroomPaymentDetail = () => {
 
   const togglePaid = async (paymentId) => {
     try {
-      const res = await authApis().post(`/payments/${paymentId}/toggle`);
+      const res = await authApis().post(endpoints.togglePayment(paymentId));
       const updated = res.data;
       console.log("👉 Toggle response:", updated);
 
-      // Cập nhật lại state cục bộ, không cần gọi lại API
       setRows((prev) =>
         prev.map((r) => {
           const newPayments = (r.payments || []).map((p) =>
@@ -97,7 +90,7 @@ const ClassroomPaymentDetail = () => {
 
   return (
     <div>
-      <h2 className="mb-4">Quản lý học phí lớp {id}</h2>
+      <h2 className="mb-4">Quản lý học phí</h2>
 
       {error && (
         <Alert variant="danger" className="mb-3">

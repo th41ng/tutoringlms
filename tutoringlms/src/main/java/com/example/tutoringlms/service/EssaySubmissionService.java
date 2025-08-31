@@ -1,18 +1,4 @@
 package com.example.tutoringlms.service;//package com.example.tutoringlms.service;
-//
-//import com.example.tutoringlms.model.EssayAssignment;
-//import com.example.tutoringlms.model.EssaySubmission;
-//import com.example.tutoringlms.model.Student;
-//import com.example.tutoringlms.repository.AssignmentRepository;
-//import com.example.tutoringlms.repository.EssayAssignmentRepository;
-//import com.example.tutoringlms.repository.EssaySubmissionRepository;
-//import com.example.tutoringlms.repository.StudentRepository;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.stereotype.Service;
-//
-//import java.time.LocalDateTime;
-//import java.util.Optional;
-//
 
 import com.example.tutoringlms.model.EssayAssignment;
 import com.example.tutoringlms.model.EssaySubmission;
@@ -107,4 +93,3 @@ public class EssaySubmissionService {
         return essaySubmissionRepository.findByAssignmentIdAndStudentId(assignmentId, studentId);
     }
 }
-

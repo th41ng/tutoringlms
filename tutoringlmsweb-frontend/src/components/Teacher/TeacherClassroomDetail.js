@@ -11,7 +11,7 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import { authApis } from "../../configs/Apis";
+import { authApis,endpoints } from "../../configs/Apis";
 import dayjs from "dayjs";
 
 const ClassroomDetail = () => {
@@ -34,7 +34,7 @@ const ClassroomDetail = () => {
 
   const loadClassDetail = async () => {
     try {
-      const res = await authApis().get(`/teacher/classroom/${id}`);
+      const res = await authApis().get(endpoints.classDetail(id));
       const data = res.data;
       setClassInfo(data);
 
@@ -58,7 +58,7 @@ const ClassroomDetail = () => {
 
   const loadStudents = async () => {
     try {
-      const res = await authApis().get(`/teacher/classroom/${id}/students`);
+      const res = await authApis().get(endpoints.classStudents(id));
       setStudents(res.data);
     } catch (err) {
       console.error("❌ Lỗi khi lấy danh sách học sinh:", err);
@@ -69,7 +69,7 @@ const ClassroomDetail = () => {
   const handleDeleteStudent = async (studentId) => {
     if (!window.confirm("Bạn có chắc muốn xóa học sinh này khỏi lớp?")) return;
     try {
-      await authApis().delete(`/teacher/classroom/${id}/students/${studentId}`);
+      await authApis().delete(endpoints.deleteStudent(id, studentId));
       setStudents((prev) => prev.filter((s) => s.id !== studentId));
     } catch (err) {
       console.error("❌ Lỗi khi xóa học sinh:", err);
@@ -80,7 +80,7 @@ const ClassroomDetail = () => {
   const openAttendanceModal = async (session) => {
     setSelectedSession(session);
     try {
-      const res = await authApis().get(`/teacher/attendance/${session.id}`);
+      const res = await authApis().get(endpoints.attendanceSession(session.id));
       setAttendanceList(res.data);
     } catch (err) {
       console.error("❌ Lỗi khi lấy dữ liệu điểm danh:", err);

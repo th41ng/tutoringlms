@@ -7,7 +7,7 @@ const CommentSection = ({ postId }) => {
 
     const loadComments = async () => {
         try {
-            const res = await authApis().get(endpoints["get-comments-by-post"](postId));
+            const res = await authApis().get(endpoints.getCommentsByPost(postId));
             setComments(res.data);
         } catch (err) {
             console.error("Lỗi khi tải bình luận:", err);
@@ -17,7 +17,7 @@ const CommentSection = ({ postId }) => {
     const handleComment = async (e) => {
         e.preventDefault();
         try {
-            await authApis().post(endpoints["create-comment"], {
+             await authApis().post(endpoints.createComment, {
                 postId,
                 content
             });

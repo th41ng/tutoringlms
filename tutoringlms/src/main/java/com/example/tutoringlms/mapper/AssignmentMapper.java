@@ -26,4 +26,3 @@ public class AssignmentMapper {
         return dto;
     }
 }
-

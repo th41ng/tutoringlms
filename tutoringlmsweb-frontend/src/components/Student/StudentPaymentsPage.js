@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { authApis } from "../../configs/Apis";
+import { authApis, endpoints } from "../../configs/Apis";
 
 const StudentPaymentPage = () => {
   const [classroom, setClassroom] = useState(null);
@@ -12,7 +12,7 @@ const StudentPaymentPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const classRes = await authApis().get("/student/classroom");
+       const classRes = await authApis().get(endpoints.studentClassroom);
         if (!classRes.data) {
           alert("Bạn chưa tham gia lớp nào!");
           setLoading(false);
@@ -20,11 +20,11 @@ const StudentPaymentPage = () => {
         }
         setClassroom(classRes.data);
 
-        const payInfoRes = await authApis().get(`/class-payments/class/${classRes.data.id}`);
+        const payInfoRes = await authApis().get(endpoints.classPaymentInfo(classRes.data.id));
         setPaymentInfo(payInfoRes.data);
 
         // ✅ Lấy Payment hiện tại của học sinh
-        const paymentRes = await authApis().get(`/payments/student/current/${classRes.data.id}`);
+        const paymentRes = await authApis().get(endpoints.studentCurrentPayment(classRes.data.id));
         setStatus(paymentRes.data?.status || "CHƯA NỘP");
         setAmount(paymentRes.data?.amount || ""); // điền số tiền đã nộp nếu có
       } catch (err) {

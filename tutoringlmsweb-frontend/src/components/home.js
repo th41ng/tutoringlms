@@ -17,6 +17,9 @@ const Home = () => {
           <button className="btn btn-outline-primary btn-lg" onClick={() => navigate('/register')}>
             Đăng ký
           </button>
+             <button className="btn btn-outline-primary btn-lg" onClick={() => navigate('/attendance')}>
+            Điểm danh
+          </button>
         </div>
       </div>
     </div>

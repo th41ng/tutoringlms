@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authApis } from "../../configs/Apis";
+import { authApis, endpoints } from "../../configs/Apis";
 import { Form, Button, Alert, Spinner, Card, Row, Col } from "react-bootstrap";
 
 const TeacherPaymentInfo = () => {
@@ -17,7 +17,7 @@ const TeacherPaymentInfo = () => {
   useEffect(() => {
     const fetchCurrentInfo = async () => {
       try {
-        const res = await authApis().get("/class-payments/current");
+        const res = await authApis().get(endpoints.currentPaymentInfo);
         setCurrentInfo(res.data);
       } catch (err) {
         console.error("❌ Lỗi tải thông tin hiện tại:", err);
@@ -36,9 +36,9 @@ const TeacherPaymentInfo = () => {
       formData.append("accountName", accountName);
       if (qrCodeFile) formData.append("qrFile", qrCodeFile);
 
-      await authApis().post("/class-payments/create-all", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+     await authApis().post(endpoints.createPaymentAllClasses, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
 
       setStatusMessage("✅ Cập nhật thông tin ngân hàng thành công cho tất cả lớp!");
     } catch (err) {

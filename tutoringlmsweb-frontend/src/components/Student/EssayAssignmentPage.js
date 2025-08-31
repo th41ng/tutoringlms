@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { authApis } from "../../configs/Apis";
+import { authApis,endpoints} from "../../configs/Apis";
 import { Card, Form, Button, Spinner, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 const EssayAssignmentPage = () => {
@@ -18,11 +18,11 @@ const EssayAssignmentPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await authApis().get(`/submission/doEssay/${assignmentId}`);
+        const res = await authApis().get(endpoints.detailEssayAssignment(assignmentId));
         console.log("Assignment JSON:", res.data);
         setAssignment(res.data);
 
-        const subRes = await authApis().get(`/submission/myessay/${assignmentId}`);
+        const subRes = await authApis().get(endpoints.myEssaySubmission(assignmentId));
         console.log("Submission JSON:", subRes.data);
 
         if (subRes.data) {
@@ -51,7 +51,7 @@ const EssayAssignmentPage = () => {
       formData.append("content", content);
       if (file) formData.append("file", file);
 
-      const res = await authApis().post("/submission/essay", formData, {
+      const res = await authApis().post(endpoints.submitEssay, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

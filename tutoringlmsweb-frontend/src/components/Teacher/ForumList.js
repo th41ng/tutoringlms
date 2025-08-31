@@ -13,10 +13,10 @@ const ForumList = () => {
   useEffect(() => {
     const loadForums = async () => {
       try {
-        const ep =
+          const ep =
           user.role === "ROLE_TEACHER"
-            ? endpoints["get_all_forums"]
-            : endpoints["get_my_class_forum"];
+            ? endpoints.getAllForums
+            : endpoints.getMyClassForum;
         const res = await authApis().get(ep);
         setForums(Array.isArray(res.data) ? res.data : [res.data]);
       } catch (err) {

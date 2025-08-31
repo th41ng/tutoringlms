@@ -12,7 +12,7 @@ const EditMCAssignment = () => {
   useEffect(() => {
     const loadAssignment = async () => {
       try {
-        const res = await authApis().get(endpoints.detail_MCassignment(id));
+        const res = await authApis().get(endpoints.detailMCAssignment(id));
 
         // Nếu chưa có câu hỏi thì khởi tạo 1 mẫu
         if (!res.data.questions || res.data.questions.length === 0) {
@@ -47,7 +47,7 @@ const EditMCAssignment = () => {
       }
 
       // PUT dữ liệu (giữ nguyên logic cũ)
-      await authApis().put(endpoints.update_MCassignment(id), assignment);
+      await authApis().put(endpoints.updateMCAssignment(id), assignment);
 
       alert("Đã lưu thành công!");
       navigate("/teacher-assignments");

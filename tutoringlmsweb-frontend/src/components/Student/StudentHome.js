@@ -7,10 +7,9 @@ const StudentHome = () => {
   const [user, setUser] = useState(null);
   const [classroom, setClassroom] = useState(null);
   const [joinCode, setJoinCode] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState(""); // trạng thái học phí
-  const [paymentAmount, setPaymentAmount] = useState(""); // số tiền đã nộp
-    const [loadingPayment, setLoadingPayment] = useState(true);
-  // Schedule modal
+  const [paymentStatus, setPaymentStatus] = useState("");
+  const [paymentAmount, setPaymentAmount] = useState("");
+  const [loadingPayment, setLoadingPayment] = useState(true);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -18,7 +17,7 @@ const StudentHome = () => {
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
-        const res = await authApis().get(endpoints.current_user);
+        const res = await authApis().get(endpoints.currentUser);
         setUser(res.data);
       } catch (err) {
         console.error("Lỗi lấy thông tin người dùng:", err);
@@ -27,14 +26,14 @@ const StudentHome = () => {
     getCurrentUser();
   }, []);
 
- useEffect(() => {
+  useEffect(() => {
     const fetchClass = async () => {
       try {
-        const res = await authApis().get(endpoints.student_classroom);
+        const res = await authApis().get(endpoints.studentClassroom);
         if (res.data) {
           setClassroom(res.data);
 
-          // Tính startDate và endDate dựa vào sessions
+
           if (res.data.sessions?.length > 0) {
             const dates = res.data.sessions.map(s => new Date(s.date).getTime());
             const start = new Date(Math.min(...dates));
@@ -45,7 +44,7 @@ const StudentHome = () => {
 
           // ✅ Lấy trạng thái thanh toán của học sinh
           try {
-            const payRes = await authApis().get(`/payments/student/current/${res.data.id}`);
+            const payRes = await authApis().get(endpoints.studentCurrentPayment(res.data.id));
             setPaymentStatus(payRes.data?.status || "CHƯA NỘP");
             setPaymentAmount(payRes.data?.amount || 0);
           } catch (err) {
@@ -65,7 +64,7 @@ const StudentHome = () => {
 
   const handleJoinClass = async () => {
     try {
-      await authApis().post(`${endpoints.join_class}?joinCode=${joinCode}`);
+      await authApis().post(endpoints.join_class, null, { params: { joinCode } });
       alert("Tham gia lớp thành công!");
       const res = await authApis().get(endpoints.student_classroom);
       setClassroom(res.data);

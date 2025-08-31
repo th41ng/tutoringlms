@@ -1,65 +1,78 @@
-
-import React, { useReducer, useEffect, useState } from 'react';
+import React, { useReducer, useEffect, useState, lazy, Suspense, useCallback } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import cookie from 'react-cookies';
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Header from './components/layouts/header';
-import Footer from './components/layouts/footer';
-import Sidebar from './components/layouts/sidebar';
-
-import Home from './components/home';
-import Login from './components/login';
-import Register from './components/register';
-import AdminDashboard from './components/admin/AdminDashboard';
-import TeacherDashboard from './components/Teacher/TeacherDashboard';
-import TeacherClassroom from './components/Teacher/TeacherClassroom';
-import CreateEsssayAssign from './components/Teacher/CreateEssayAssign';
-import CreateMCAssignment from './components/Teacher/CreateMCAssignment';
-import EditMCAssignment from './components/Teacher/EditMCAssignment';
-import TeacherClassroomDetail from './components/Teacher/TeacherClassroomDetail';
-import Anoucement from './components/Teacher/TeacherAnnouncements';
-import Forum from './components/Teacher/ForumList';
-import StudentHome from './components/Student/StudentHome';
-import ProtectedRoute from './components/layouts/ProtectedRoute';
-import ForumDetail from './components/Teacher/ForumDetail';
 import MyUserReducer from './reducers/MyUserReducer';
 import { MyUserContext, MyDispatchContext } from './configs/Context';
 import { authApis, endpoints } from './configs/Apis';
-import TeacherAssignments from './components/Teacher/TeacherAssigment';
-import AssignmentsList from './components/Student/AssignmentsList';
-import EssayAssignmentPage from './components/Student/EssayAssignmentPage';
-import MultipleChoiceAssignmentPage from './components/Student/MultipleChoiceAssignmentPage';
-import ViewSubmissions from './components/Teacher/ViewSubmissions';
-import FaceAttendance from './components/FaceAttendance';
-import StudentPaymentsPage from './components/Student/StudentPaymentsPage';
-import TeacherPaymentInfo from './components/Teacher/TeacherPaymentInfo';
-import ClassroomPaymentDetail from './components/Teacher/ClassroomPaymentDetail';
-import ClassroomPaymentsPage from './components/Teacher/ClassroomPaymentsPage';
-import FaceEnroll from './components/FaceEnroll';
+import ProtectedRoute from './components/layouts/ProtectedRoute';
+
+// Lazy load components
+const Header = lazy(() => import('./components/layouts/header'));
+const Footer = lazy(() => import('./components/layouts/footer'));
+const Sidebar = lazy(() => import('./components/layouts/sidebar'));
+
+const Home = lazy(() => import('./components/home'));
+const Login = lazy(() => import('./components/login'));
+const Register = lazy(() => import('./components/register'));
+
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard'));
+
+const TeacherDashboard = lazy(() => import('./components/Teacher/TeacherDashboard'));
+const TeacherClassroom = lazy(() => import('./components/Teacher/TeacherClassroom'));
+const TeacherClassroomDetail = lazy(() => import('./components/Teacher/TeacherClassroomDetail'));
+const CreateEsssayAssign = lazy(() => import('./components/Teacher/CreateEssayAssign'));
+const CreateMCAssignment = lazy(() => import('./components/Teacher/CreateMCAssignment'));
+const EditMCAssignment = lazy(() => import('./components/Teacher/EditMCAssignment'));
+const TeacherAssignments = lazy(() => import('./components/Teacher/TeacherAssigment'));
+const ViewSubmissions = lazy(() => import('./components/Teacher/ViewSubmissions'));
+const Anoucement = lazy(() => import('./components/Teacher/TeacherAnnouncements'));
+const Forum = lazy(() => import('./components/Teacher/ForumList'));
+const ForumDetail = lazy(() => import('./components/Teacher/ForumDetail'));
+const TeacherPaymentInfo = lazy(() => import('./components/Teacher/TeacherPaymentInfo'));
+const ClassroomPaymentsPage = lazy(() => import('./components/Teacher/ClassroomPaymentsPage'));
+const ClassroomPaymentDetail = lazy(() => import('./components/Teacher/ClassroomPaymentDetail'));
+
+const StudentHome = lazy(() => import('./components/Student/StudentHome'));
+const AssignmentsList = lazy(() => import('./components/Student/AssignmentsList'));
+const EssayAssignmentPage = lazy(() => import('./components/Student/EssayAssignmentPage'));
+const MultipleChoiceAssignmentPage = lazy(() => import('./components/Student/MultipleChoiceAssignmentPage'));
+const StudentPaymentsPage = lazy(() => import('./components/Student/StudentPaymentsPage'));
+
+const FaceAttendance = lazy(() => import('./components/FaceAttendance'));
+const FaceEnroll = lazy(() => import('./components/FaceEnroll'));
+
+// Memoized layout components
+const MemoHeader = React.memo(Header);
+const MemoFooter = React.memo(Footer);
+const MemoSidebar = React.memo(Sidebar);
 
 const AppRoutes = () => {
   const location = useLocation();
   const hideSidebarPaths = ['/', '/login', '/register'];
-  const isAuthPage = hideSidebarPaths.includes(location.pathname);
+  const showSidebar = !hideSidebarPaths.includes(location.pathname);
 
   return (
-    <>
-      <Header />
+    <Suspense fallback={<h3 className="text-center mt-5">Đang tải...</h3>}>
+      <MemoHeader />
       <div className="d-flex">
-        {!isAuthPage && <Sidebar />}
+        {showSidebar && <MemoSidebar />}
         <Container className="flex-grow-1">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
 
+            {/* Admin */}
             <Route path="/admin/dashboard" element={
               <ProtectedRoute allowedRoles={['ROLE_ADMIN']}>
                 <AdminDashboard />
               </ProtectedRoute>
             } />
+
+            {/* Teacher */}
             <Route path="/teacher/dashboard" element={
               <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
                 <TeacherDashboard />
@@ -95,9 +108,9 @@ const AppRoutes = () => {
                 <EditMCAssignment />
               </ProtectedRoute>
             } />
-            <Route path="/forum/mine" element={
-              <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
-                <Forum />
+            <Route path="/view-submissions/:assignmentId" element={
+              <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
+                <ViewSubmissions />
               </ProtectedRoute>
             } />
             <Route path="/forum/all" element={
@@ -105,48 +118,36 @@ const AppRoutes = () => {
                 <Forum />
               </ProtectedRoute>
             } />
+            <Route path="/forum/mine" element={
+              <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
+                <Forum />
+              </ProtectedRoute>
+            } />
+            <Route path="/forums/:id" element={
+              <ProtectedRoute allowedRoles={['ROLE_TEACHER','ROLE_STUDENT']}>
+                <ForumDetail />
+              </ProtectedRoute>
+            } />
             <Route path="/payment_info" element={
               <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
                 <TeacherPaymentInfo />
               </ProtectedRoute>
             } />
-            <Route path="/anoucements/all" element={
-              <Anoucement allowedRoles={['ROLE_TEACHER']}>
-                <Forum />
-              </Anoucement>
-            } />
-
-            <Route path="/view-submissions/:assignmentId" element={
-              <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
-                <ViewSubmissions />
-              </ProtectedRoute>
-            } />
-
             <Route path="/classroom-payment" element={
               <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
                 <ClassroomPaymentsPage />
               </ProtectedRoute>
             } />
-
-
             <Route path="/classroom-payment-detail/:id" element={
               <ProtectedRoute allowedRoles={['ROLE_TEACHER']}>
                 <ClassroomPaymentDetail />
               </ProtectedRoute>
             } />
-
-            <Route path="/forum/posts/my-class" element={
-              <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
-                <Forum />
-              </ProtectedRoute>
+            <Route path="/anoucements/all" element={
+              <Anoucement allowedRoles={['ROLE_TEACHER']} />
             } />
 
-            <Route path="/forums/:id" element={
-              <ProtectedRoute allowedRoles={['ROLE_TEACHER', 'ROLE_STUDENT']}>
-                <ForumDetail />
-              </ProtectedRoute>
-            } />
-
+            {/* Student */}
             <Route path="/student/home" element={
               <ProtectedRoute allowedRoles={['ROLE_STUDENT']}>
                 <StudentHome />
@@ -172,17 +173,15 @@ const AppRoutes = () => {
                 <StudentPaymentsPage />
               </ProtectedRoute>
             } />
-            <Route path="/attendance" element={
-              <FaceAttendance />
-            } />
-             <Route path="/attendance/register-face" element={  
-                <FaceEnroll />
-            } />
+
+            {/* Attendance */}
+            <Route path="/attendance" element={<FaceAttendance />} />
+            <Route path="/attendance/register-face" element={<FaceEnroll />} />
           </Routes>
         </Container>
       </div>
-      <Footer />
-    </>
+      <MemoFooter />
+    </Suspense>
   );
 };
 
@@ -190,43 +189,40 @@ const App = () => {
   const [user, dispatch] = useReducer(MyUserReducer, null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      const token = cookie.load("token");
-      const clearStateAndCookies = () => {
-        dispatch({ type: "logout" });
-        cookie.remove("token");
-        localStorage.removeItem('user');
-        setLoading(false);
-      };
-      if (!token) {
-        console.warn("⚠️ Không có token => dọn dẹp");
-        clearStateAndCookies();
-        return;
-      }
-      try {
-        const res = await authApis().get(endpoints.current_user);
-        console.log("✅ User hiện tại:", res.data);
-        dispatch({ type: "login", payload: res.data });
-      } catch (err) {
-        console.error("❌ Lỗi khi gọi /auth/me:", err);
-        clearStateAndCookies();
-      } finally {
-        setLoading(false);
-      }
+  const fetchCurrentUser = useCallback(async () => {
+    const token = cookie.load('token');
+
+    const clearState = () => {
+      dispatch({ type: 'logout' });
+      cookie.remove('token');
+      localStorage.removeItem('user');
+      setLoading(false);
     };
-    fetchCurrentUser();
+
+    if (!token) {
+      clearState();
+      return;
+    }
+
+    try {
+      const res = await authApis().get(endpoints.currentUser);
+      dispatch({ type: 'login', payload: res.data });
+    } catch (err) {
+      clearState();
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchCurrentUser();
+  }, [fetchCurrentUser]);
 
   return (
     <MyUserContext.Provider value={{ user, loading }}>
       <MyDispatchContext.Provider value={dispatch}>
         <BrowserRouter>
-          {loading ? (
-            <h3 className="text-center mt-5">Đang tải...</h3>
-          ) : (
-            <AppRoutes />
-          )}
+          {loading ? <h3 className="text-center mt-5">Đang tải...</h3> : <AppRoutes />}
         </BrowserRouter>
       </MyDispatchContext.Provider>
     </MyUserContext.Provider>

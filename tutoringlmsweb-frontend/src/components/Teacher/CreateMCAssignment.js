@@ -18,7 +18,7 @@ const CreateMCAssignment = () => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const res = await authApis().get(endpoints.list_classes);
+        const res = await authApis().get(endpoints.listClasses);
         setClasses(res.data);
       } catch (err) {
         console.error("Lỗi khi tải danh sách lớp:", err);
@@ -98,9 +98,9 @@ const CreateMCAssignment = () => {
     if (!validateAssignment()) return;
 
     try {
-      await authApis().post(endpoints.create_MCassignment, assignment);
+      await authApis().post(endpoints.createMCAssignment, assignment);
       alert("Tạo bài trắc nghiệm thành công!");
-      navigate("/teacher/assignments");
+      navigate("/assignments/all");
     } catch (err) {
       console.error("Lỗi khi tạo bài trắc nghiệm:", err);
       alert("Đã xảy ra lỗi!");

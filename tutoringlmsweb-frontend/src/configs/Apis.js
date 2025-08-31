@@ -1,63 +1,97 @@
-import axios from "axios";
-import cookie from 'react-cookies';
+    import axios from "axios";
+    import cookie from "react-cookies";
 
-const BASE_URL = 'http://localhost:8080/api/';
+    const BASE_URL = "http://localhost:8080/api/";
 
-export const endpoints = {
-    'register': 'auth/register',
-    'login': 'auth/login',
-    'current_user': '/auth/me',
+    export const endpoints = {
+    // Auth
+    register: "auth/register",
+    login: "auth/login",
+    currentUser: "auth/me",
 
-    //Dành cho Admin
-    'list_users': 'admin/listUser',
-    'create_user': 'admin/createUser',
-    'edit_user': (id) => `admin/editUser/${id}`,
-    'delete_user': (id) => `admin/deleteUser/${id}`,
+    // Admin
+    listUsers: "admin/listUser",
+    createUser: "admin/createUser",
+    editUser: (id) => `admin/editUser/${id}`,
+    deleteUser: (id) => `admin/deleteUser/${id}`,
 
-    //Dành cho teacher
-    "list_classes": "teacher/listClasses",
-    "create_class": "teacher/createClasses",
-    "edit_class": (classId) => `teacher/editClasses/${classId}`,
-    "delete_class": (classId) => `teacher/deleteClasses/${classId}`,
-    "class_detail": (classId) => `/teacher/classroom/${classId}`,
-    // Assignment (cho giáo viên)
-    "list_assignments": "assignments/all",
-    "create_ESassignment": "assignments/createEssay",
-    "create_MCassignment": "assignments/create-multiple-choice",
-    "update_MCassignment": (id) => `assignments/multiple-choice/update/${id}`,
-    "delete_MCassignment": (id) => `assignments/multiple-choice/delete/${id}`,
-    "update_assignment": (id) => `assignments/update/${id}`,
-    "delete_assignment": (id) => `assignments/delete/${id}`,
-    "detail_MCassignment": (id) => `assignments/multiple-choice/${id}`,
+    // Teacher
+    listClasses: "teacher/listClasses",
+    createClass: "teacher/createClasses",
+    editClass: (classId) => `teacher/editClasses/${classId}`,
+    deleteClass: (classId) => `teacher/deleteClasses/${classId}`,
+    classDetail: (classId) => `/teacher/classroom/${classId}`,
+    classStudents: (classId) => `teacher/classroom/${classId}/students`,
+    deleteStudent: (classId, studentId) => `teacher/classroom/${classId}/students/${studentId}`,
 
-    "create_announcement": "announcements/create",           
-    "all_announcements": "announcements/all",  
-    "delete_announcement":(id) => `announcements/delete/${id}`, 
-    "update_announcement":(id)  =>`announcements/update/${id}`, 
-    // Diễn đàn - Forum
-    "get_all_forums": "forum/all",           // ✅ đúng path backend
-    "get_my_class_forum": "forum/mine",
-    "create_post": "forum/posts",
-    "get_posts_by_class": (classId) => `forum/posts/classroom/${classId}`,
-    "create_comment": "forum/comments",
-    "get_comments_by_post": (postId) => `forum/comments/post/${postId}`,
+    // Assignments (Teacher)
+    listAssignments: "assignments/all",
+    createEssayAssignment: "assignments/createEssay",
+    createMCAssignment: "assignments/create-multiple-choice",
+    updateMCAssignment: (id) => `assignments/multiple-choice/update/${id}`,
+    deleteMCAssignment: (id) => `assignments/multiple-choice/delete/${id}`,
+    updateAssignment: (id) => `assignments/update/${id}`,
+    deleteAssignment: (id) => `assignments/delete/${id}`,
+    detailMCAssignment: (id) => `assignments/multiple-choice/${id}`,
 
-    //Dành cho student
-    "join_class": "student/joinClass",
-    'student_classroom': 'student/classroom',
-    "assignments_by_class": (classId) => `submission/class/${classId}`,
-};
+    // Assignment submissions
+    assignmentSubmissions: (assignmentId, type) => `assignments/${assignmentId}/submissions?type=${type}`,
+    submitGrade: (assignmentId, studentId) => `assignments/${assignmentId}/submissions/${studentId}/grade`,
 
-export const authApis = () => {
+    // Payments (Teacher & Student)
+    currentPaymentInfo: "class-payments/current",
+    createPaymentAllClasses: "class-payments/create-all",
+    classPaymentInfo: (classId) => `class-payments/class/${classId}`,
+    studentCurrentPayment: (classId) => `payments/student/current/${classId}`,
+    uploadPaymentProof: (classId) => `payments/upload-proof/${classId}`,
+    paymentsTable: (classId) => `payments/class/${classId}/table`,
+    togglePayment: (paymentId) => `payments/${paymentId}/toggle`,
+
+    // Announcements
+    createAnnouncement: "announcements/create",
+    allAnnouncements: "announcements/all", 
+    deleteAnnouncement: (id) => `announcements/delete/${id}`,
+    updateAnnouncement: (id) => `announcements/update/${id}`,
+
+    // Forum
+    getAllForums: "forum/all",
+    getMyClassForum: "forum/mine",
+    createPost: "forum/posts",
+    getPostsByClass: (classId) => `forum/posts/classroom/${classId}`,
+    createComment: "forum/comments",
+    getCommentsByPost: (postId) => `forum/comments/post/${postId}`,
+
+    // Student
+    joinClass: "student/joinClass",
+    studentClassroom: "student/classroom",
+    assignmentsByClass: (classId) => `submission/class/${classId}`,
+    detailEssayAssignment: (id) => `submission/doEssay/${id}`,
+    myEssaySubmission: (id) => `submission/myessay/${id}`,
+    submitEssay: "submission/essay",
+    detailMCAssignment: (id) => `submission/doMC/${id}`,
+    myMCSubmission: (id) => `submission/mymc/${id}`,
+    submitMC: (id) => `submission/multiple-choice?assignmentId=${id}`,
+
+    // Attendance
+    currentAttendanceSession: "attendance/current",
+    attendanceSession: (sessionId) => `teacher/attendance/${sessionId}`,
+
+    // Teacher stats
+    teacherStats: "teacher/stats",
+    };
+
+    // Axios instance dùng token
+    export const authApis = () => {
     return axios.create({
         baseURL: BASE_URL,
         withCredentials: true,
         headers: {
-            "Authorization": `Bearer ${cookie.load('token')}`
-        }
+        Authorization: `Bearer ${cookie.load("token")}`,
+        },
     });
-}
+    };
 
-export default axios.create({
-    baseURL: BASE_URL
-});
+    // Axios default (không cần token)
+    export default axios.create({
+    baseURL: BASE_URL,
+    });

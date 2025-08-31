@@ -60,11 +60,6 @@ public class PaymentController {
         Payment confirmedPayment = paymentService.confirmPayment(paymentId);
         return ResponseEntity.ok(confirmedPayment);
     }
-//    // 3. Danh sách thanh toán của lớp
-//    @GetMapping("/class/{classId}")
-//    public ResponseEntity<List<Payment>> getPaymentsByClass(@PathVariable Long classId) {
-//        return ResponseEntity.ok(paymentRepo.findByClassRoomId(classId));
-//    }
 
     // 4. Danh sách thanh toán của học sinh
     @GetMapping("/student/{studentId}")

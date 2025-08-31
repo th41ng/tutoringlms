@@ -2,6 +2,7 @@ package com.example.tutoringlms.service;
 
 import com.example.tutoringlms.dto.ClassRoomDTO;
 import com.example.tutoringlms.dto.TeacherDTO;
+import com.example.tutoringlms.exception.UserNotFoundException;
 import com.example.tutoringlms.model.Student;
 import com.example.tutoringlms.model.ClassRoom;
 import com.example.tutoringlms.model.Teacher;
@@ -10,6 +11,7 @@ import com.example.tutoringlms.repository.ClassRoomRepository;
 import com.example.tutoringlms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +22,7 @@ public class StudentService {
 
     private final ClassRoomRepository classRoomRepository;
     private final UserRepository userRepository;
-
+    @Transactional
     public boolean joinClass(String username, String joinCode) {
         Optional<ClassRoom> classRoomOpt = classRoomRepository.findByJoinCode(joinCode);
         if (classRoomOpt.isEmpty()) return false;
@@ -90,7 +92,7 @@ public class StudentService {
 
     public Student getStudentEntityByUsername(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng: " + username));
+                .orElseThrow(() -> new UserNotFoundException(username));
 
         if (!(user instanceof Student student)) {
             throw new IllegalStateException("Người dùng không phải kiểu hs.");

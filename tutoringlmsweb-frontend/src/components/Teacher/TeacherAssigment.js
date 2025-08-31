@@ -32,7 +32,7 @@ const TeacherAssignments = () => {
         formData.append("file", selectedAssignment.file);
       }
 
-      await authApis().put(endpoints.update_assignment(selectedAssignment.id), formData);
+      await authApis().put(endpoints.updateAssignment(selectedAssignment.id), formData);
       setShowEditModal(false);
       fetchAssignments();
     } catch (err) {
@@ -42,7 +42,7 @@ const TeacherAssignments = () => {
 
   const fetchAssignments = async () => {
     try {
-      const response = await authApis().get(endpoints.list_assignments);
+      const response = await authApis().get(endpoints.listAssignments);
       setAssignments(response.data);
     } catch (err) {
       console.error("Lỗi tải danh sách bài tập:", err);
@@ -51,7 +51,7 @@ const TeacherAssignments = () => {
 
   const fetchClasses = async () => {
     try {
-      const res = await authApis().get(endpoints.list_classes);
+      const res = await authApis().get(endpoints.listClasses);
       setClasses(res.data);
     } catch (err) {
       console.error("Lỗi khi tải danh sách lớp:", err);
@@ -66,7 +66,7 @@ const TeacherAssignments = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa bài tập này?")) {
       try {
-        await authApis().delete(endpoints.delete_assignment(id));
+        await authApis().delete(endpoints.deleteAssignment(id));
         fetchAssignments();
       } catch (err) {
         console.error("Lỗi khi xóa:", err);

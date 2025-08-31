@@ -3,6 +3,8 @@ package com.example.tutoringlms.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -14,6 +16,7 @@ public class Announcement {
 
     private String title;
     private String content;
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @ManyToOne

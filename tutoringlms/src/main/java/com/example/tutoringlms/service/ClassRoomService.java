@@ -3,12 +3,14 @@ package com.example.tutoringlms.service;
 import com.example.tutoringlms.dto.AttendanceDTO;
 import com.example.tutoringlms.dto.ClassRoomDTO;
 import com.example.tutoringlms.dto.TeacherDTO;
+import com.example.tutoringlms.exception.ClassRoomNotFoundException;
 import com.example.tutoringlms.mapper.ClassRoomMapper;
 import com.example.tutoringlms.model.*;
 import com.example.tutoringlms.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -22,14 +24,8 @@ public class ClassRoomService {
     private  final ClassSessionRepository classSessionRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final StudentRepository studentRepository;
-
-//    public ClassRoom createClass(ClassRoom classRoom) {
-//        String joinCode = generateUniqueJoinCode(6);
-//        classRoom.setJoinCode(joinCode);
-//
-//        return classRoomRepository.save(classRoom);
-//    }
-public ClassRoom createClass(ClassRoomDTO dto, Teacher teacher, LocalDate startDate, int weeks) {
+    @Transactional
+    public ClassRoom createClass(ClassRoomDTO dto, Teacher teacher, LocalDate startDate, int weeks) {
     ClassRoom classRoom = new ClassRoom();
     classRoom.setClassName(dto.getClassName());
 
@@ -81,7 +77,7 @@ public ClassRoom createClass(ClassRoomDTO dto, Teacher teacher, LocalDate startD
         return RandomStringUtils.randomNumeric(length);
     }
 
-
+    @Transactional
     public ClassRoom updateClass(Long id, ClassRoom updatedClass) {
         Optional<ClassRoom> opt = classRoomRepository.findById(id);
         if (opt.isEmpty())
@@ -92,7 +88,7 @@ public ClassRoom createClass(ClassRoomDTO dto, Teacher teacher, LocalDate startD
         existing.setSchedule(updatedClass.getSchedule());
         return classRoomRepository.save(existing);
     }
-
+    @Transactional
     public void deleteClass(Long id) {
         classRoomRepository.deleteById(id);
     }
@@ -100,7 +96,7 @@ public ClassRoom createClass(ClassRoomDTO dto, Teacher teacher, LocalDate startD
 
     public ClassRoomDTO getClassRoomDTOById(Long id, String username) {
         ClassRoom classRoom = classRoomRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lớp học"));
+                .orElseThrow(() -> new ClassRoomNotFoundException(id));
         return ClassRoomMapper.toDTO(classRoom);
     }
 
@@ -123,7 +119,7 @@ public ClassRoom createClass(ClassRoomDTO dto, Teacher teacher, LocalDate startD
 
     public ClassRoom getClassRoomById(Long id) {
         return classRoomRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lớp học với ID = " + id));
+                .orElseThrow(() -> new ClassRoomNotFoundException(id));
     }
 
 

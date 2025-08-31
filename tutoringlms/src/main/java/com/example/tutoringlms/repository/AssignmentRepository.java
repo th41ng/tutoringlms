@@ -19,4 +19,12 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
     // Lấy tất cả bài tập trắc nghiệm
     @Query("SELECT m FROM MultipleChoiceAssignment m")
     List<Assignment> findAllMcAssignments();
+
+    // 🔹 Lấy tất cả bài tập Essay theo classRoomId
+    @Query("SELECT e FROM EssayAssignment e WHERE e.classRoom.id = :classRoomId")
+    List<Assignment> findAllEssayByClassRoomId(Long classRoomId);
+
+    // 🔹 Lấy tất cả bài tập MultipleChoice theo classRoomId
+    @Query("SELECT m FROM MultipleChoiceAssignment m WHERE m.classRoom.id = :classRoomId")
+    List<Assignment> findAllMcByClassRoomId(Long classRoomId);
 }

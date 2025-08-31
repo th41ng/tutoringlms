@@ -13,12 +13,12 @@ const ForumDetail = () => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        const res = await authApis().get(endpoints.get_posts_by_class(id));
+        const res = await authApis().get(endpoints.getPostsByClass(id));
         setPosts(res.data);
 
         const allComments = {};
         for (let post of res.data) {
-          const resCmt = await authApis().get(endpoints.get_comments_by_post(post.id));
+          const resCmt = await authApis().get(endpoints.getCommentsByPost(post.id));
           allComments[post.id] = resCmt.data;
         }
         setComments(allComments);
@@ -36,7 +36,7 @@ const ForumDetail = () => {
   const handleCreatePost = async (e) => {
     e.preventDefault();
     try {
-      const res = await authApis().post(endpoints.create_post, {
+      const res = await authApis().post(endpoints.createPost, {
         ...newPost,
         forumId: id,
       });
@@ -51,7 +51,7 @@ const ForumDetail = () => {
   const handleCreateComment = async (e, postId, content) => {
     e.preventDefault();
     try {
-      const res = await authApis().post(endpoints.create_comment, {
+      const res = await authApis().post(endpoints.createComment, {
         postId,
         content,
       });

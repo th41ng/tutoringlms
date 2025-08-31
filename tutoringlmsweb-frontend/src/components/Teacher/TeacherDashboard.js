@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Container, Spinner } from 'react-bootstrap';
-import { authApis } from '../../configs/Apis';
+import { authApis, endpoints } from '../../configs/Apis';
 
 const TeacherDashboard = () => {
   const [stats, setStats] = useState(null);
@@ -12,7 +12,7 @@ const TeacherDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const res = await authApis().get("/teacher/stats");
+       const res = await authApis().get(endpoints.teacherStats);
       setStats(res.data);
     } catch (err) {
       console.error("Lỗi khi tải thống kê:", err);
@@ -63,7 +63,7 @@ const TeacherDashboard = () => {
               </Card.Text>
             </Card.Body>
           </Card>
-        </Col>
+        </Col>  
         <Col md={3}>
           <Card className="text-center shadow-sm border-0">
             <Card.Body>

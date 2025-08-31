@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { authApis } from "../../configs/Apis";
+import { authApis, endpoints } from "../../configs/Apis";
 import { Table, Button, Modal, Form, Alert, Spinner } from "react-bootstrap";
 
 export default function ViewSubmissions() {
@@ -20,9 +20,7 @@ export default function ViewSubmissions() {
   useEffect(() => {
     async function fetchSubmissions() {
       try {
-        const res = await authApis().get(`/assignments/${assignmentId}/submissions`, {
-          params: { type }
-        });
+          const res = await authApis().get(endpoints.assignmentSubmissions(assignmentId, type));
         setSubmissions(res.data);
       } catch (err) {
         console.error("API Error:", err.response?.data || err.message);
@@ -48,9 +46,10 @@ export default function ViewSubmissions() {
 
   const submitGrade = async () => {
     try {
-      await authApis().post(`/assignments/${assignmentId}/submissions/${currentSubmission.studentId}/grade`, {
-        grade: gradeInput
-      });
+     await authApis().post(
+      endpoints.submitGrade(assignmentId, currentSubmission.studentId),
+      { grade: gradeInput }
+    );
 
       setSubmissions(submissions.map(sub =>
         sub.studentId === currentSubmission.studentId ? { ...sub, grade: gradeInput } : sub

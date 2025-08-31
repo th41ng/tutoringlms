@@ -1,22 +1,30 @@
 package com.example.tutoringlms.model;
 
+import com.example.tutoringlms.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Table(name = "payments")
 public class Payment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Float amount;
-    private String status; // PENDING, PAID, UNPAID
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status; // dùng enum thay vì String
+    @CreationTimestamp
     private LocalDate paidAt;
-    private Boolean isPaid;
-    private String proofUrl; // link hình minh chứng
+
+    private String proofUrl;
     private int paidYear;
     private int paidMonth;
 

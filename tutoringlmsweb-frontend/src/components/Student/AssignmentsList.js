@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { authApis } from "../../configs/Apis";
+import { authApis,endpoints } from "../../configs/Apis";
 import { Card, Row, Col, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -14,7 +14,7 @@ const AssignmentsList = () => {
     const fetchData = async () => {
       try {
         // Lấy lớp học hiện tại của học sinh
-        const classRes = await authApis().get("/student/classroom");
+         const classRes = await authApis().get(endpoints.studentClassroom);
         if (!classRes.data) {
           setError("Bạn chưa tham gia lớp nào.");
           return;
@@ -22,7 +22,7 @@ const AssignmentsList = () => {
         setClassroom(classRes.data);
 
         // Lấy danh sách bài tập theo lớp
-        const assignRes = await authApis().get(`/submission/class/${classRes.data.id}`);
+       const assignRes = await authApis().get(endpoints.assignmentsByClass(classRes.data.id));
         setAssignments(Array.isArray(assignRes.data) ? assignRes.data : []);
       } catch (err) {
         console.error(err.response || err);

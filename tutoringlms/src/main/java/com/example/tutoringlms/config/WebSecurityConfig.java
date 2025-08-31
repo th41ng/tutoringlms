@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.example.tutoringlms.filter.JwtFilter;
 import com.example.tutoringlms.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,6 +31,17 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/attendance/**").permitAll()
+                        .requestMatchers("/api/teacher/attendance/**").permitAll()
+                        .requestMatchers("/api/teacher/**").hasAuthority("ROLE_TEACHER")
+                        .requestMatchers("/api/student/**").hasAuthority("ROLE_STUDENT")
+                        .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/announcements/**").hasAuthority("ROLE_TEACHER")
+                        .requestMatchers("/api/assignments/**").hasAuthority("ROLE_TEACHER")
+                        .requestMatchers("/api/class-payments/**").hasAnyAuthority("ROLE_TEACHER", "ROLE_STUDENT")
+                        .requestMatchers("/api/forum/**").hasAnyAuthority("ROLE_TEACHER", "ROLE_STUDENT", "ROLE_ADMIN")
+                        .requestMatchers("/api/payments/**").hasAnyAuthority("ROLE_TEACHER", "ROLE_STUDENT")
+                        .requestMatchers("/api/submission/**").hasAuthority("ROLE_STUDENT")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -50,14 +62,17 @@ public class WebSecurityConfig {
         return source;
     }
     @Bean
-    public Cloudinary cloudinary() {
-        Cloudinary cloudinary
-                = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", "dxxwcby8l",
-                "api_key", "448651448423589",
-                "api_secret", "ftGud0r1TTqp0CGp5tjwNmkAm-A",
-                "secure", true));
-        return cloudinary;
+    public Cloudinary cloudinary(
+            @Value("${cloudinary.cloud_name}") String cloudName,
+            @Value("${cloudinary.api_key}") String apiKey,
+            @Value("${cloudinary.api_secret}") String apiSecret) {
+
+        return new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", cloudName,
+                "api_key", apiKey,
+                "api_secret", apiSecret,
+                "secure", true
+        ));
     }
 
     @Bean

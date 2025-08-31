@@ -20,7 +20,7 @@ const TeacherAnnouncements = () => {
 
     const fetchClasses = async () => {
         try {
-            const res = await authApis().get(endpoints.list_classes);
+            const res = await authApis().get(endpoints.listClasses);
             setClasses(res.data);
         } catch (err) {
             console.error("Lỗi khi tải danh sách lớp:", err);
@@ -29,7 +29,7 @@ const TeacherAnnouncements = () => {
 
     const fetchAnnouncements = async () => {
         try {
-            const res = await authApis().get(endpoints.all_announcements);
+            const res = await authApis().get(endpoints.allAnnouncements);
             setAnnouncements(res.data);
         } catch (err) {
             console.error("Lỗi khi tải thông báo:", err);
@@ -50,7 +50,7 @@ const TeacherAnnouncements = () => {
             return;
         }
         try {
-            await authApis().post(endpoints.create_announcement, {
+            await authApis().post(endpoints.createAnnouncement, {
                 title,
                 content,
                 classRoomId: selectedClassId,
@@ -79,7 +79,7 @@ const TeacherAnnouncements = () => {
             return;
         }
         try {
-            await authApis().put(endpoints.update_announcement(editingId), {
+            await authApis().put(endpoints.updateAnnouncement(editingId), {
                 title,
                 content,
                 classRoomId: selectedClassId,
@@ -96,7 +96,7 @@ const TeacherAnnouncements = () => {
     const handleDelete = async (id) => {
         if (window.confirm("Bạn có chắc chắn muốn xoá thông báo này?")) {
             try {
-                await authApis().delete(endpoints.delete_announcement(id));
+                await authApis().delete(endpoints.deleteAnnouncement(id));
                 fetchAnnouncements();
             } catch (err) {
                 console.error("Xóa thông báo thất bại", err);
