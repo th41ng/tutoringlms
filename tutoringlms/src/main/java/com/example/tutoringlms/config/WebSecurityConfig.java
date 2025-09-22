@@ -40,7 +40,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/class-payments/**").hasAnyAuthority("ROLE_TEACHER", "ROLE_STUDENT")
                         .requestMatchers("/api/forum/**").hasAnyAuthority("ROLE_TEACHER", "ROLE_STUDENT", "ROLE_ADMIN")
                         .requestMatchers("/api/payments/**").hasAnyAuthority("ROLE_TEACHER", "ROLE_STUDENT")
-                        .requestMatchers("/api/submission/**").hasAuthority("ROLE_STUDENT")
+                        .requestMatchers("/api/submission/**").hasAnyAuthority("ROLE_TEACHER", "ROLE_STUDENT")
 
                         .anyRequest().authenticated()
                 )

@@ -285,7 +285,6 @@ public class SubmissionController {
         return ResponseEntity.ok(dto);
     }
 
-    /** Lấy thông tin bài tập trắc nghiệm để làm bài */
     @GetMapping("/doMC/{assignmentId}")
     public ResponseEntity<Map<String, Object>> getMultipleChoiceAssignmentById(
             @PathVariable Long assignmentId,
@@ -296,7 +295,6 @@ public class SubmissionController {
         return ResponseEntity.ok(response);
     }
 
-    /** Lấy bài làm trắc nghiệm của học sinh (nếu đã nộp) */
     @GetMapping("/mymc/{assignmentId}")
     public ResponseEntity<MultipleChoiceSubmission> getMyMCSubmission(
             @PathVariable Long assignmentId,

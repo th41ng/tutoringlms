@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, ListGroup, Form, Button, Modal, Table, Badge } from "react-bootstrap";
+import { Card, Row, Col, Form, Button, Modal, Table, Badge } from "react-bootstrap";
 import { authApis, endpoints } from "../../configs/Apis";
 import dayjs from "dayjs";
+import { FaChalkboardTeacher, FaUserGraduate, FaMoneyBillWave } from "react-icons/fa";
 
 const StudentHome = () => {
   const [user, setUser] = useState(null);
@@ -33,22 +34,19 @@ const StudentHome = () => {
         if (res.data) {
           setClassroom(res.data);
 
-
           if (res.data.sessions?.length > 0) {
-            const dates = res.data.sessions.map(s => new Date(s.date).getTime());
+            const dates = res.data.sessions.map((s) => new Date(s.date).getTime());
             const start = new Date(Math.min(...dates));
             const end = new Date(Math.max(...dates));
             setStartDate(dayjs(start).format("YYYY-MM-DD"));
             setEndDate(dayjs(end).format("YYYY-MM-DD"));
           }
 
-          // ✅ Lấy trạng thái thanh toán của học sinh
           try {
             const payRes = await authApis().get(endpoints.studentCurrentPayment(res.data.id));
             setPaymentStatus(payRes.data?.status || "CHƯA NỘP");
             setPaymentAmount(payRes.data?.amount || 0);
           } catch (err) {
-            console.error("Lỗi lấy trạng thái học phí:", err);
             setPaymentStatus("CHƯA NỘP");
             setPaymentAmount(0);
           } finally {
@@ -64,19 +62,18 @@ const StudentHome = () => {
 
   const handleJoinClass = async () => {
     try {
-      await authApis().post(endpoints.join_class, null, { params: { joinCode } });
+      await authApis().post(endpoints.joinClass, null, { params: { joinCode } });
       alert("Tham gia lớp thành công!");
-      const res = await authApis().get(endpoints.student_classroom);
+      const res = await authApis().get(endpoints.studentClassroom);
       setClassroom(res.data);
     } catch (err) {
-      console.error(err);
       alert("Mã lớp không hợp lệ hoặc bạn đã tham gia lớp.");
     }
   };
 
-  // Hàm render thời khóa biểu
   const renderScheduleTable = () => {
-    if (!classroom?.sessions || classroom.sessions.length === 0) return <p>Chưa có thời khóa biểu.</p>;
+    if (!classroom?.sessions || classroom.sessions.length === 0)
+      return <p>Chưa có thời khóa biểu.</p>;
     if (!startDate || !endDate) return null;
 
     const start = dayjs(startDate);
@@ -90,21 +87,25 @@ const StudentHome = () => {
       <Table bordered hover responsive className="text-center align-middle">
         <thead className="table-light">
           <tr>
-            {days.map(d => (
-              <th key={d.format("YYYY-MM-DD")}>{d.format("DD/MM/YYYY")}</th>
+            {days.map((d) => (
+              <th key={d.format("YYYY-MM-DD")}>{d.format("DD/MM")}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           <tr>
-            {days.map(d => {
-              const sessionsInDay = classroom.sessions.filter(s => dayjs(s.date).isSame(d, 'day'));
+            {days.map((d) => {
+              const sessionsInDay = classroom.sessions.filter((s) =>
+                dayjs(s.date).isSame(d, "day")
+              );
               return (
                 <td key={d.format("YYYY-MM-DD")}>
                   {sessionsInDay.length > 0 ? (
-                    sessionsInDay.map(s => (
+                    sessionsInDay.map((s) => (
                       <div key={s.id}>
-                        <Badge bg="primary">{s.startTime} - {s.endTime}</Badge>
+                        <Badge bg="primary">
+                          {s.startTime} - {s.endTime}
+                        </Badge>
                       </div>
                     ))
                   ) : (
@@ -122,13 +123,16 @@ const StudentHome = () => {
   if (!user) return <p>Đang tải thông tin người dùng...</p>;
 
   return (
-    <div>
-      <h2 className="mb-4">Trang chủ học sinh</h2>
+    <div className="container mt-4">
+      <h2 className="mb-4 text-primary">Trang chủ học sinh</h2>
 
-      <Row className="mb-4">
+      <Row className="g-4">
+        {/* Thông tin lớp */}
         <Col md={6}>
           <Card className="shadow-sm">
-            <Card.Header className="bg-primary text-white">Lớp học của bạn</Card.Header>
+            <Card.Header className="bg-primary text-white d-flex align-items-center">
+              <FaChalkboardTeacher className="me-2" /> Lớp học của bạn
+            </Card.Header>
             <Card.Body>
               {!classroom ? (
                 <>
@@ -141,16 +145,24 @@ const StudentHome = () => {
                       onChange={(e) => setJoinCode(e.target.value)}
                     />
                   </Form.Group>
-                  <Button variant="primary" className="mt-2" onClick={handleJoinClass}>
+                  <Button variant="success" className="mt-2" onClick={handleJoinClass}>
                     Tham gia lớp
                   </Button>
                 </>
               ) : (
                 <>
-                  <Card.Text><strong>Tên lớp:</strong> {classroom.className}</Card.Text>
-                  <Card.Text><strong>Giáo viên:</strong> {classroom.teacher.fullName}</Card.Text>
-                  <Button variant="info" size="sm" onClick={() => setShowScheduleModal(true)}>
-                    Xem Thời khóa biểu
+                  <Card.Text>
+                    <strong>Tên lớp:</strong> {classroom.className}
+                  </Card.Text>
+                  <Card.Text>
+                    <strong>Giáo viên:</strong> {classroom.teacher.fullName}
+                  </Card.Text>
+                  <Button
+                    variant="outline-info"
+                    size="sm"
+                    onClick={() => setShowScheduleModal(true)}
+                  >
+                    📅 Xem Thời khóa biểu
                   </Button>
                 </>
               )}
@@ -158,40 +170,47 @@ const StudentHome = () => {
           </Card>
         </Col>
 
+        {/* Thông tin cá nhân */}
         <Col md={6}>
           <Card className="shadow-sm">
-            <Card.Header className="bg-success text-white">Trạng thái bài tập</Card.Header>
-            <ListGroup variant="flush">
-              <ListGroup.Item>Đã hoàn thành: <strong>0</strong></ListGroup.Item>
-              <ListGroup.Item>Chưa hoàn thành: <strong>0</strong></ListGroup.Item>
-              <ListGroup.Item>Sắp tới hạn: <strong>0</strong></ListGroup.Item>
-            </ListGroup>
-          </Card>
-        </Col>
-      </Row>
-
-      <Row>
-        <Col md={6}>
-          <Card className="shadow-sm mb-4">
-            <Card.Header className="bg-info text-white">Thông tin cá nhân</Card.Header>
+            <Card.Header className="bg-info text-white d-flex align-items-center">
+              <FaUserGraduate className="me-2" /> Thông tin cá nhân
+            </Card.Header>
             <Card.Body>
-              <Card.Text><strong>Họ tên:</strong> {user.lastName} {user.firstName}</Card.Text>
-              <Card.Text><strong>Email:</strong> {user.email}</Card.Text>
-              <Card.Text><strong>Số điện thoại:</strong> {user.phoneNum}</Card.Text>
+              <Card.Text>
+                <strong>Họ tên:</strong> {user.lastName} {user.firstName}
+              </Card.Text>
+              <Card.Text>
+                <strong>Email:</strong> {user.email}
+              </Card.Text>
+              <Card.Text>
+                <strong>Số điện thoại:</strong> {user.phoneNum}
+              </Card.Text>
             </Card.Body>
           </Card>
         </Col>
 
-        <Col md={6}>
+        {/* Học phí */}
+        <Col md={12}>
           <Card className="shadow-sm">
-            <Card.Header className="bg-warning text-dark">Học phí</Card.Header>
+            <Card.Header className="bg-warning text-dark d-flex align-items-center">
+              <FaMoneyBillWave className="me-2" /> Học phí
+            </Card.Header>
             <Card.Body>
               {loadingPayment ? (
                 <p>Đang tải...</p>
               ) : (
                 <p>
                   Trạng thái:{" "}
-                  <strong className={paymentStatus === "PAID" ? "text-success" : paymentStatus === "PENDING" ? "text-warning" : "text-danger"}>
+                  <strong
+                    className={
+                      paymentStatus === "PAID"
+                        ? "text-success"
+                        : paymentStatus === "PENDING"
+                        ? "text-warning"
+                        : "text-danger"
+                    }
+                  >
                     {paymentStatus}
                   </strong>
                   {paymentAmount ? ` | Số tiền đã nộp: ${paymentAmount} VND` : ""}
@@ -203,15 +222,20 @@ const StudentHome = () => {
       </Row>
 
       {/* Modal thời khóa biểu */}
-      <Modal show={showScheduleModal} onHide={() => setShowScheduleModal(false)} size="lg" centered>
+      <Modal
+        show={showScheduleModal}
+        onHide={() => setShowScheduleModal(false)}
+        size="lg"
+        centered
+      >
         <Modal.Header closeButton>
           <Modal.Title>📅 Thời khóa biểu</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {renderScheduleTable()}
-        </Modal.Body>
+        <Modal.Body>{renderScheduleTable()}</Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowScheduleModal(false)}>Đóng</Button>
+          <Button variant="secondary" onClick={() => setShowScheduleModal(false)}>
+            Đóng
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

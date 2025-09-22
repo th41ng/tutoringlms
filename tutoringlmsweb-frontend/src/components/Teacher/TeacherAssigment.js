@@ -120,7 +120,7 @@ const TeacherAssignments = () => {
               </td>
               <td className="text-center">
                 <div className="d-flex justify-content-center gap-2">
-                  <Button
+                  {/* <Button
                     variant="warning"
                     size="sm"
                     onClick={() => {
@@ -129,7 +129,7 @@ const TeacherAssignments = () => {
                     }}
                   >
                     ✏️ Sửa
-                  </Button>
+                  </Button> */}
                   <Button variant="danger" size="sm" onClick={() => handleDelete(a.id)}>
                     🗑️ Xóa
                   </Button>

@@ -16,7 +16,7 @@ const FaceEnroll = () => {
   useEffect(() => {
     const getCurrentUser = async () => {
       try {
-        const res = await authApis().get(endpoints.current_user);
+        const res = await authApis().get(endpoints.currentUser);
         setUser(res.data);
       } catch (err) {
         console.error("Lỗi lấy thông tin người dùng:", err);

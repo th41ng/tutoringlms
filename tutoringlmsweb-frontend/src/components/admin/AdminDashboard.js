@@ -18,7 +18,7 @@ const AdminDashboard = () => {
 
   const loadUsers = async () => {
     try {
-      const response = await authApis().get(endpoints.list_users);
+      const response = await authApis().get(endpoints.listUsers);
       setUsers(response.data);
     } catch (error) {
       console.error("Lỗi khi tải danh sách người dùng:", error);
@@ -64,9 +64,9 @@ const AdminDashboard = () => {
     event.preventDefault();
     try {
       if (editingUser) {
-        await authApis().put(endpoints.edit_user(editingUser.id), formData);
+        await authApis().put(endpoints.editUser(editingUser.id), formData);
       } else {
-        await authApis().post(endpoints.create_user, formData);
+        await authApis().post(endpoints.createUser, formData);
       }
       handleCloseModal();
       loadUsers();
@@ -78,7 +78,7 @@ const AdminDashboard = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa người dùng này không?")) {
       try {
-        await authApis().delete(endpoints.delete_user(id));
+        await authApis().delete(endpoints.deleteUser(id));
         loadUsers();
       } catch (error) {
         console.error("Lỗi khi xóa người dùng:", error);
